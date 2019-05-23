@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>问题解答 | Tylor&#39;s Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="java事件机制 事件源、事件类、事件监听者 java线程池 作用 线程复用，减少线程创建和销毁的开销 线程管理，防止大量活跃线程消耗服务器性能或线程数超出限制导致应用崩溃   常用线程池 ThreadPoolExecutor Executors.newFixedThreadPool(int) 固定线程数，无界队列Integer.MAX Executors.newSingleThreadExecu">
+<meta property="og:type" content="website">
+<meta property="og:title" content="问题解答">
+<meta property="og:url" content="http://tylorliu.github.io/private/问题解答.html">
+<meta property="og:site_name" content="Tylor&#39;s Home">
+<meta property="og:description" content="java事件机制 事件源、事件类、事件监听者 java线程池 作用 线程复用，减少线程创建和销毁的开销 线程管理，防止大量活跃线程消耗服务器性能或线程数超出限制导致应用崩溃   常用线程池 ThreadPoolExecutor Executors.newFixedThreadPool(int) 固定线程数，无界队列Integer.MAX Executors.newSingleThreadExecu">
+<meta property="og:updated_time" content="2018-05-03T13:35:40.353Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="问题解答">
+<meta name="twitter:description" content="java事件机制 事件源、事件类、事件监听者 java线程池 作用 线程复用，减少线程创建和销毁的开销 线程管理，防止大量活跃线程消耗服务器性能或线程数超出限制导致应用崩溃   常用线程池 ThreadPoolExecutor Executors.newFixedThreadPool(int) 固定线程数，无界队列Integer.MAX Executors.newSingleThreadExecu">
+  
+    <link rel="alternative" href="/atom.xml" title="Tylor&#39;s Home" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="https://s1.ax1x.com/2018/01/26/pqcmPe.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Tylor</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>About</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/tylorliu" title="github">github</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/ClassLoader/" style="font-size: 10px;">ClassLoader</a> <a href="/tags/HTTP/" style="font-size: 10px;">HTTP</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/JDK/" style="font-size: 20px;">JDK</a> <a href="/tags/JPA/" style="font-size: 10px;">JPA</a> <a href="/tags/JVM/" style="font-size: 16.67px;">JVM</a> <a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a> <a href="/tags/Mybatis/" style="font-size: 10px;">Mybatis</a> <a href="/tags/PostgreSQL/" style="font-size: 10px;">PostgreSQL</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/WebService/" style="font-size: 16.67px;">WebService</a> <a href="/tags/WinRAR/" style="font-size: 10px;">WinRAR</a> <a href="/tags/XML/" style="font-size: 10px;">XML</a> <a href="/tags/cxf/" style="font-size: 10px;">cxf</a> <a href="/tags/iLink/" style="font-size: 10px;">iLink</a> <a href="/tags/itext5/" style="font-size: 10px;">itext5</a> <a href="/tags/java/" style="font-size: 10px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/tools/" style="font-size: 13.33px;">tools</a> <a href="/tags/命令/" style="font-size: 10px;">命令</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/性能/" style="font-size: 10px;">性能</a> <a href="/tags/设计/" style="font-size: 10px;">设计</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="https://imgchr.com/">路过图床</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">兴之所至，金石为开；兴趣+成就感是持续学习的源动力，给自己带来快乐与满足</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Tylor</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="https://s1.ax1x.com/2018/01/26/pqcmPe.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Tylor</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/tylorliu" title="github">github</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="page-" class="article article-type-page" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/private/问题解答.html" class="article-date">
+  	<time datetime="2018-03-07T11:18:00.000Z" itemprop="datePublished">2018-03-07</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      问题解答
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="java事件机制"><a href="#java事件机制" class="headerlink" title="java事件机制"></a>java事件机制</h3><p> 事件源、事件类、事件监听者</p>
+<h3 id="java线程池"><a href="#java线程池" class="headerlink" title="java线程池"></a>java线程池</h3><ul>
+<li>作用<ul>
+<li>线程复用，减少线程创建和销毁的开销</li>
+<li>线程管理，防止大量活跃线程消耗服务器性能或线程数超出限制导致应用崩溃</li>
+</ul>
+</li>
+<li>常用线程池 ThreadPoolExecutor<ul>
+<li>Executors.newFixedThreadPool(int) 固定线程数，无界队列Integer.MAX</li>
+<li>Executors.newSingleThreadExecutor() 单线程，LinkedBlockingQueue</li>
+<li>Executors.newCachedThreadPool() 缓冲线程池，0~Integer.MAX线程,SynchronousQueue</li>
+<li>Executors.newScheduledThreadPool(int) 定时任务线程池，int~Integer.MAX线程，DelayedWorkQueue</li>
+</ul>
+</li>
+<li>线程池策略<ul>
+<li>TaskCount &lt; corePoolSize，创建线程处理任务</li>
+<li>corePoolSize + queueCapacity &gt; TaskCount &gt; corePoolSize, 存入队列中</li>
+<li>TaskCount &gt; maxPoolSize + queueCapacity，执行拒绝策略RejectedExecutionHandler.rejectedExecution()</li>
+<li>多于corePoolSize的空闲线程，keepLiveTime后被回收</li>
+</ul>
+</li>
+<li>有界队列 Capacity较小，请求多容易Block,吞吐量不足会有很多请求被拒绝</li>
+<li>无界队列 Capacity很大，容易耗尽内存</li>
+</ul>
+<h3 id="反射机制"><a href="#反射机制" class="headerlink" title="反射机制"></a>反射机制</h3><ul>
+<li>功能：<ul>
+<li>运行时动态获取类信息：接口、注解、field、method等</li>
+<li>动态构造对象</li>
+<li>动态读写对象field、调用method</li>
+<li>动态代理</li>
+</ul>
+</li>
+<li>用途<ul>
+<li>逆向代码 (反编译)</li>
+<li>注解</li>
+<li>动态生成类(Gson/JAXB)</li>
+<li>写框架(灵活性)</li>
+</ul>
+</li>
+<li>优缺点<ul>
+<li>灵活、功能强大 IOC</li>
+<li>性能慢，解释运行，热点代码优化</li>
+</ul>
+</li>
+</ul>
+<h3 id="HTTP-Hypertext-Transfer-Protocol-超文本传输协议"><a href="#HTTP-Hypertext-Transfer-Protocol-超文本传输协议" class="headerlink" title="HTTP - Hypertext Transfer Protocol 超文本传输协议"></a>HTTP - Hypertext Transfer Protocol 超文本传输协议</h3><ul>
+<li>组成<ul>
+<li>URL</li>
+<li>报文<ul>
+<li>Method(GET/POST/PUT/DELETE)</li>
+<li>Header<ul>
+<li>返回码</li>
+</ul>
+</li>
+<li>Body</li>
+</ul>
+</li>
+<li>底层TCP</li>
+</ul>
+</li>
+</ul>
+<h3 id="常用数据结构"><a href="#常用数据结构" class="headerlink" title="常用数据结构"></a>常用数据结构</h3><ul>
+<li>List<ul>
+<li>LinkedList 双向链表，顺序访问</li>
+<li>ArrayList 数组，RandomAccess</li>
+<li>CopyOnWriteArrayList 并发容器<ul>
+<li>读写分离</li>
+<li>写操作lock，修改array</li>
+<li>双倍内存&amp;不保证实时一致性</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Set<ul>
+<li>HashSet <ul>
+<li>底层是HashMap, value为new Object,用oldValue判断key是否已存在</li>
+</ul>
+</li>
+<li>TreeSet - 有序<ul>
+<li>&lt;? extends NavigableMap&gt;默认TreeMap</li>
+</ul>
+</li>
+<li>LinkedHashSet<ul>
+<li>LinkedHashMap</li>
+</ul>
+</li>
+<li>CopyOnWriteArraySet<ul>
+<li>CopyOnWriteArrayList</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Map</li>
+</ul>
+<h3 id="项目介绍-amp-价值-amp-成长"><a href="#项目介绍-amp-价值-amp-成长" class="headerlink" title="项目介绍&amp;价值&amp;成长"></a>项目介绍&amp;价值&amp;成长</h3><ul>
+<li>东信综合前置<ul>
+<li>(通信适配器+报文自定义)统一接入银行外部调用(网银、APP、ATM、PC客户端)，统合后端银行ESB、银联接口的调用。</li>
+<li>JBPM流程引擎自定义组合业务流程，提供通信、加解密、SQL、日志等各种中间业务组件。</li>
+<li>提供二次开发支持快速推出新业务，如VTM开卡、客户端交水电费等。</li>
+<li>提供运维监控、报表等功能。</li>
+<li>亮点、难点：通信方式、报文格式、业务流程(嵌套复用)可配置,链路压测单机250TPS，服务器TCP优化<ul>
+<li>Http/TCP 长短连接适配、</li>
+<li>定变长报文解析(xml/json/8583)</li>
+<li>JBPM流程组件开发</li>
+<li>OSGI热部署</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>海康教育智能开放平台<ul>
+<li>底层服务集成<ul>
+<li>存储</li>
+<li>流媒体</li>
+<li>设备接入网关<ul>
+<li>录播主机</li>
+<li>脸谱</li>
+<li>明眸</li>
+</ul>
+</li>
+<li>视频转码、编辑</li>
+</ul>
+</li>
+<li>业务应用(教学、校园管理)<ul>
+<li>考勤(教室、宿舍)</li>
+<li>门禁(限时进出、请假)</li>
+<li>课堂行为分析</li>
+<li>课程直播、录播</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code>iLink综合前置系统旨在为银行提供企业服务总线(ESB)解决方案，主要有以下几种作用：
+1. 整合外部业务接入渠道(移动端、web、PC客户端、终端设备)、以及后台调用
+2. 提供二次开发支持快速推出新业务
+3. 提供实时监控、报表统计等运维功能
+主要实现手段：
+  - (通信适配器+报文自定义)统一接入银行外部调用(网银、APP、ATM、PC客户端)，统合后端银行ESB、银联接口的调用。
+  - JBPM流程引擎自定义组合业务流程，提供通信、加解密、SQL、日志等各种中间业务组件。
+  - 亮点、难点：通信方式、报文格式、业务流程(嵌套复用)可配置,链路压测单机250TPS，服务器TCP优化
+    - Http/TCP 长短连接适配、
+    - 定变长报文解析(xml/json/8583)
+    - JBPM流程组件开发
+    - OSGI热部署
+通过数据交换、应用集成、渠道整合、业务流程整合，为不同客户渠道提供银行的各种后台业务，实现系统和业务的统一管理。 系统由二次开发平台、核心运行平台、监控运维平台三部分组成，其中二次开发平台为RCP插件项目，核心平台使用OSGI架构，监控运维平台使用SSH框架。 核心平台主要由渠道模块(包括通信适配、报文适配等)和业务模块(包含jbpm流程引擎、资源管理等)组成，
+另外有数据库、负载均衡、安全、资源管理、监控等独立模块提供支持。
+</code></pre>
+      
+    </div>
+    
+  </div>
+  
+    
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+<div class="share_addthis">
+  <div class="sharing addthis_toolbox share">
+    <a class="addthis_button_facebook_like"></a>
+    <a class="addthis_button_tweet"></a>
+    <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+    <a class="addthis_counter addthis_pill_style"></a>
+  </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-560c64c35486b3d4" async="async"></script>
+</div>
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="" data-title="问题解答" data-url="http://tylorliu.github.io/private/问题解答.html"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2019 Tylor
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: false,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
