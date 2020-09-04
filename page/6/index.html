@@ -108,7 +108,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/ClassLoader/" style="font-size: 10px;">ClassLoader</a> <a href="/tags/HTTP/" style="font-size: 10px;">HTTP</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/JDK/" style="font-size: 20px;">JDK</a> <a href="/tags/JPA/" style="font-size: 10px;">JPA</a> <a href="/tags/JVM/" style="font-size: 16.67px;">JVM</a> <a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a> <a href="/tags/Mybatis/" style="font-size: 10px;">Mybatis</a> <a href="/tags/PostgreSQL/" style="font-size: 10px;">PostgreSQL</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/WebService/" style="font-size: 16.67px;">WebService</a> <a href="/tags/WinRAR/" style="font-size: 10px;">WinRAR</a> <a href="/tags/XML/" style="font-size: 10px;">XML</a> <a href="/tags/cxf/" style="font-size: 10px;">cxf</a> <a href="/tags/iLink/" style="font-size: 10px;">iLink</a> <a href="/tags/itext5/" style="font-size: 10px;">itext5</a> <a href="/tags/java/" style="font-size: 10px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/tools/" style="font-size: 13.33px;">tools</a> <a href="/tags/命令/" style="font-size: 10px;">命令</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/性能/" style="font-size: 10px;">性能</a> <a href="/tags/设计/" style="font-size: 10px;">设计</a>
+						<a href="/tags/ClassLoader/" style="font-size: 10px;">ClassLoader</a> <a href="/tags/HTTP/" style="font-size: 10px;">HTTP</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/JDK/" style="font-size: 20px;">JDK</a> <a href="/tags/JPA/" style="font-size: 10px;">JPA</a> <a href="/tags/JVM/" style="font-size: 16.67px;">JVM</a> <a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a> <a href="/tags/Mybatis/" style="font-size: 10px;">Mybatis</a> <a href="/tags/Mysql/" style="font-size: 10px;">Mysql</a> <a href="/tags/PostgreSQL/" style="font-size: 10px;">PostgreSQL</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/WebService/" style="font-size: 16.67px;">WebService</a> <a href="/tags/WinRAR/" style="font-size: 10px;">WinRAR</a> <a href="/tags/XML/" style="font-size: 10px;">XML</a> <a href="/tags/cxf/" style="font-size: 10px;">cxf</a> <a href="/tags/iLink/" style="font-size: 10px;">iLink</a> <a href="/tags/itext5/" style="font-size: 10px;">itext5</a> <a href="/tags/java/" style="font-size: 10px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/tools/" style="font-size: 13.33px;">tools</a> <a href="/tags/命令/" style="font-size: 10px;">命令</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/性能/" style="font-size: 10px;">性能</a> <a href="/tags/设计/" style="font-size: 10px;">设计</a>
 					</div>
 				</section>
 				
@@ -175,6 +175,195 @@
 </nav>
 
       <div class="body-wrap">
+  
+    <article id="post-读《深入理解Java虚拟机》1-内存管理" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/02/03/读《深入理解Java虚拟机》1-内存管理/" class="article-date">
+  	<time datetime="2018-02-03T07:57:00.000Z" itemprop="datePublished">2018-02-03</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/03/读《深入理解Java虚拟机》1-内存管理/">读《深入理解Java虚拟机》1-内存管理</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="JVM中的内存区域划分"><a href="#JVM中的内存区域划分" class="headerlink" title="JVM中的内存区域划分"></a>JVM中的内存区域划分</h3><p><img src="https://s1.ax1x.com/2018/02/03/9ZHKpQ.png" alt="9ZHKpQ.png"></p>
+<ul>
+<li>线程共享区<ul>
+<li>堆 —— 存放Class实例和数组。 <ul>
+<li>新生代<ul>
+<li>Eden</li>
+<li>Survivor<ul>
+<li>From</li>
+<li>To</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>老年代</li>
+</ul>
+</li>
+<li>方法区(Permgen/MetaSpace)<ul>
+<li>类信息</li>
+<li>运行时常量池</li>
+<li>静态变量</li>
+<li>JIT编译代码等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>线程私有区<ul>
+<li>程序计数器</li>
+<li>栈内存  默认-Xss1024K<ul>
+<li>虚拟机栈<ul>
+<li>栈帧<ul>
+<li>局部变量表</li>
+<li>操作数栈</li>
+<li>动态链接</li>
+<li>方法返回地址等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>本地方法栈</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>直接内存 (NIO DirectByteBuffer)</li>
+</ul>
+<h3 id="对象创建"><a href="#对象创建" class="headerlink" title="对象创建"></a>对象创建</h3><ul>
+<li>类加载检查</li>
+<li>分配内存<ul>
+<li>指针碰撞：内存规整，以指针分界空闲内存，移动指针分配内存</li>
+<li>空闲列表：内存不规整，查列表分配、更新列表</li>
+<li>线程安全<ul>
+<li>(Thread Local Allocation Buffer)线程本地缓存分配，锁同步；-XX:+/-UseTLAB</li>
+<li>CAS+失败重试</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>生成对象头，filed置0，<init>初始化</init></li>
+<li>对象引用入栈</li>
+</ul>
+<h3 id="垃圾收集GC"><a href="#垃圾收集GC" class="headerlink" title="垃圾收集GC"></a>垃圾收集GC</h3><ul>
+<li>哪些内存需要回收<ul>
+<li>引用计数 (无法解决相互引用)</li>
+<li>可达性分析 - GCROOTS<ul>
+<li>栈帧的局部变量表中的对象</li>
+<li>类静态属性引用的对象</li>
+<li>方法区常量引用的对象</li>
+<li>本地方法栈中引用的变量</li>
+</ul>
+</li>
+<li>引用<ul>
+<li>强-&gt;正常引用</li>
+<li>软-&gt;即将OOM时回收</li>
+<li>弱-&gt;有无弱引用都不影响回收</li>
+<li>虚-&gt;queue监听回收</li>
+</ul>
+</li>
+<li>方法区回收<ul>
+<li>废弃常量 - 没有引用</li>
+<li>无用的类 (-XX:+CMSClassUnloadingEnabled )<ul>
+<li>无实例</li>
+<li>classloader已回收</li>
+<li>其Class实例无引用</li>
+<li>没有任何反射调用</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>什么时候回收<ul>
+<li>Minor GC : Eden空间不足以分配对象时触发</li>
+<li>Major/Full GC : System.gc()或Minor GC解决不了问题时触发</li>
+</ul>
+</li>
+<li>如何回收<ul>
+<li>垃圾收集算法-&gt;分代收集<ul>
+<li>新生代 ：复制<ul>
+<li>Serial 单线程stw适用于新生代较小的场景，如桌面应用 (Client默认收集器)</li>
+<li>ParNew 多线程版，一般与CMS共用，线程数=CPU数，-XX: ParallelGCThreads</li>
+<li>Parallel Scavenge 与CMS不兼容<ul>
+<li>-XX:MaxGCPauseMillis 最大停顿时间-&gt;交互应用</li>
+<li>-XX:GCTimeRadio x 吞吐量=x/(1+x) -&gt;后台运算</li>
+<li>-XX:+ UseAdaptiveSizePolicy自调节      </li>
+</ul>
+</li>
+</ul>
+</li>
+<li>老年代 ：标记 清除/整理<ul>
+<li>Serial Old 整理(Client默认收集器)</li>
+<li>Parallel Old 多线程版，与Scavenge配合用</li>
+<li>CMS(Concurrent Mark Sweep) 缩短停顿时间，适用于网站服务器<ul>
+<li>线程数=(CPU+3)/4，适合多CPU服务器</li>
+<li>用户线程并发需预留空间 -XX:CMSInitiatingOccupancyFraction=80</li>
+<li>空间碎片问题 -XX:CMSFullGCsBeforeCompaction=1<br><a href="https://imgchr.com/i/9GdyJH" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/02/11/9GdyJH.md.jpg" alt="9GdyJH.md.jpg"></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>G1 ：标记整理+region间复制，实现可预测停顿<ul>
+<li>Region </li>
+<li>优先列表</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JVM/">JVM</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/note/">note</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-类加载机制" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -539,82 +728,6 @@
 
 
   
-    <article id="post-踩坑记2—SpringDataJPA合集" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/24/踩坑记2—SpringDataJPA合集/" class="article-date">
-  	<time datetime="2018-01-24T09:40:00.000Z" itemprop="datePublished">2018-01-24</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/24/踩坑记2—SpringDataJPA合集/">踩坑记2—SpringDataJPA合集</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="lombok-Data注解-pojo-–-存在外键关联"><a href="#lombok-Data注解-pojo-–-存在外键关联" class="headerlink" title="lombok@Data注解 pojo – 存在外键关联"></a>lombok@Data注解 pojo – 存在外键关联</h3><ul>
-<li>toString()导致StackOverFlow</li>
-<li>作为DTO输出，JSON序列化报错 (属性添加@JsonIgnore解决)</li>
-</ul>
-<h3 id="依靠数据库unique防业务字段重复"><a href="#依靠数据库unique防业务字段重复" class="headerlink" title="依靠数据库unique防业务字段重复"></a>依靠数据库unique防业务字段重复</h3><ul>
-<li>示例中,由于saveDevice被事务控制，若device与已有设备冲突，saveDevice()执行完后提交事务时才会报错，此时</li>
-</ul>
-<p>已调用外部接口上报了新增设备信息，本系统回滚save操作，就会导致数据不一致。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saveDevice</span><span class="params">(Device device)</span></span>&#123;</span><br><span class="line">  deviceDao.save(device);</span><br><span class="line">  outerService.reportDeviceAdded(device);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="for循环内调用-Transactional方法，偶现异常"><a href="#for循环内调用-Transactional方法，偶现异常" class="headerlink" title="for循环内调用@Transactional方法，偶现异常"></a>for循环内调用@Transactional方法，偶现异常</h3><p>Spring - No EntityManager with actual transaction available for current thread - cannot reliably process ‘persist’ call<br>将外部方法也标记@Transactional，循环内部捕获异常，内部改为@Transactional(propagation = Propagation.REQUIRES_NEW)</p>
-<h3 id="外键关联对象先后save时偶现"><a href="#外键关联对象先后save时偶现" class="headerlink" title="外键关联对象先后save时偶现"></a>外键关联对象先后save时偶现</h3><ul>
-<li>错误问题：<br>org.springframework.orm.jpa.JpaObjectRetrievalFailureException: Unable to find com.xxx.DeviceChannel with id 12;</li>
-<li>代码：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deviceChannelDao.save(channels);</span><br><span class="line">deviceDao.save(device);</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>deviceChannel与device外键关联，修改后代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">device.setDeviceChannels(deviceChannelDao.save(channels));</span><br><span class="line">deviceDao.save(device);</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JPA/">JPA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/troubleshooting/">troubleshooting</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/5/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/7/">Next &raquo;</a>
@@ -625,7 +738,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2019 Tylor
+    		&copy; 2020 Tylor
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten

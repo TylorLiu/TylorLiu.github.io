@@ -4,19 +4,19 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>iLink项目回顾 | Tylor&#39;s Home</title>
+  <title>Mysql重启导致历史表归档主键冲突 | Tylor&#39;s Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="iLink综合前置是我初入职场参与的第一个项目，但是在项目的架构思路、业务复杂度、技术含量方面上依然可圈可点。 简介首先，项目的定位是银行ESB系统，即银行的企业服务总线，兼具统合银行现有业务系统和快速开发新业务的能力。项目由三部分组成：  核心运行平台：OSGI框架开发的后台系统，运行二次开发平台导出的业务包 二次开发平台：RCP开发的银行业务开发工具，可视化编辑业务流，可自定义各种业务组件。（">
-<meta name="keywords" content="iLink">
+  <meta name="description" content="问题场景COP日初始化时，会将当前表数据归档到历史表，然后把数据从当前表删除。 由于MySql InnoDB数据库自增列auto_increment的最大值保存在内存中，启动后auto_increment会重置为当前表的最大值+1。 如果此时重启数据库，由于当前表无数据，重启后当前表新增的数据主键就变为1。 再次日初始化时，由于历史表中已存在主键为1的数据，就会主键冲突。 解决方案1. 升级Mys">
+<meta name="keywords" content="Mysql">
 <meta property="og:type" content="article">
-<meta property="og:title" content="iLink项目回顾">
-<meta property="og:url" content="http://tylorliu.github.io/2018/05/03/iLink项目回顾/index.html">
+<meta property="og:title" content="Mysql重启导致历史表归档主键冲突">
+<meta property="og:url" content="http://tylorliu.github.io/2018/05/19/归档历史表后Mysql重启自增主键重置问题/index.html">
 <meta property="og:site_name" content="Tylor&#39;s Home">
-<meta property="og:description" content="iLink综合前置是我初入职场参与的第一个项目，但是在项目的架构思路、业务复杂度、技术含量方面上依然可圈可点。 简介首先，项目的定位是银行ESB系统，即银行的企业服务总线，兼具统合银行现有业务系统和快速开发新业务的能力。项目由三部分组成：  核心运行平台：OSGI框架开发的后台系统，运行二次开发平台导出的业务包 二次开发平台：RCP开发的银行业务开发工具，可视化编辑业务流，可自定义各种业务组件。（">
-<meta property="og:updated_time" content="2018-05-03T13:35:40.336Z">
+<meta property="og:description" content="问题场景COP日初始化时，会将当前表数据归档到历史表，然后把数据从当前表删除。 由于MySql InnoDB数据库自增列auto_increment的最大值保存在内存中，启动后auto_increment会重置为当前表的最大值+1。 如果此时重启数据库，由于当前表无数据，重启后当前表新增的数据主键就变为1。 再次日初始化时，由于历史表中已存在主键为1的数据，就会主键冲突。 解决方案1. 升级Mys">
+<meta property="og:updated_time" content="2020-02-22T15:41:23.612Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="iLink项目回顾">
-<meta name="twitter:description" content="iLink综合前置是我初入职场参与的第一个项目，但是在项目的架构思路、业务复杂度、技术含量方面上依然可圈可点。 简介首先，项目的定位是银行ESB系统，即银行的企业服务总线，兼具统合银行现有业务系统和快速开发新业务的能力。项目由三部分组成：  核心运行平台：OSGI框架开发的后台系统，运行二次开发平台导出的业务包 二次开发平台：RCP开发的银行业务开发工具，可视化编辑业务流，可自定义各种业务组件。（">
+<meta name="twitter:title" content="Mysql重启导致历史表归档主键冲突">
+<meta name="twitter:description" content="问题场景COP日初始化时，会将当前表数据归档到历史表，然后把数据从当前表删除。 由于MySql InnoDB数据库自增列auto_increment的最大值保存在内存中，启动后auto_increment会重置为当前表的最大值+1。 如果此时重启数据库，由于当前表无数据，重启后当前表新增的数据主键就变为1。 再次日初始化时，由于历史表中已存在主键为1的数据，就会主键冲突。 解决方案1. 升级Mys">
   
     <link rel="alternative" href="/atom.xml" title="Tylor&#39;s Home" type="application/atom+xml">
   
@@ -176,11 +176,11 @@
 	</div>
 </nav>
 
-      <div class="body-wrap"><article id="post-iLink项目回顾" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-归档历史表后Mysql重启自增主键重置问题" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/05/03/iLink项目回顾/" class="article-date">
-  	<time datetime="2018-05-03T13:35:40.336Z" itemprop="datePublished">2018-05-03</time>
+      <a href="/2018/05/19/归档历史表后Mysql重启自增主键重置问题/" class="article-date">
+  	<time datetime="2018-05-19T03:29:00.000Z" itemprop="datePublished">2018-05-19</time>
 </a>
     </div>
   
@@ -193,7 +193,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      iLink项目回顾
+      Mysql重启导致历史表归档主键冲突
     </h1>
   
 
@@ -202,7 +202,7 @@
       <div class="article-info article-info-post">
         
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iLink/">iLink</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mysql/">Mysql</a></li></ul>
 	</div>
 
         
@@ -217,13 +217,16 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>iLink综合前置是我初入职场参与的第一个项目，但是在项目的架构思路、业务复杂度、技术含量方面上依然可圈可点。</p>
-<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>首先，项目的定位是银行ESB系统，即银行的企业服务总线，兼具统合银行现有业务系统和快速开发新业务的能力。项目由三部分组成：</p>
-<ul>
-<li>核心运行平台：OSGI框架开发的后台系统，运行二次开发平台导出的业务包</li>
-<li>二次开发平台：RCP开发的银行业务开发工具，可视化编辑业务流，可自定义各种业务组件。（JBPM流程复用）</li>
-<li>运维监控平台：监控核心平台的运行，提供实时告警和业务报表等功能</li>
-</ul>
+        <h3 id="问题场景"><a href="#问题场景" class="headerlink" title="问题场景"></a>问题场景</h3><pre><code>COP日初始化时，会将当前表数据归档到历史表，然后把数据从当前表删除。
+由于MySql InnoDB数据库自增列auto_increment的最大值保存在内存中，启动后auto_increment会重置为当前表的最大值+1。
+如果此时重启数据库，由于当前表无数据，重启后当前表新增的数据主键就变为1。
+再次日初始化时，由于历史表中已存在主键为1的数据，就会主键冲突。
+</code></pre><h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><pre><code>1. 升级Mysql到8.0.0版本 (参考官网bug issue，未验证) 
+2. 为当前表添加触发器，插入数据时，取当前表和历史表中较大的auto_increment作为当前表的auto_increment。
+    以COP为例，当前表为cop_tliquidateins，历史表为cop_thisliquidateins，主键为liquidate_ins_id，按以下方式创建触发器：
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">delimiter $$</span><br><span class="line">drop trigger if exists trig_autoinc_liquidateins;</span><br><span class="line">CREATE TRIGGER trig_autoinc_liquidateins BEFORE INSERT ON cop_tliquidateins</span><br><span class="line">FOR EACH ROW</span><br><span class="line">BEGIN</span><br><span class="line">  declare auto_incr1 BIGINT;</span><br><span class="line">  declare auto_incr2 BIGINT;</span><br><span class="line">  IF (NEW.liquidate_ins_id=0) THEN</span><br><span class="line">    SELECT AUTO_INCREMENT INTO auto_incr1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = SCHEMA() and UPPER(TABLE_NAME) = UPPER(&apos;cop_tliquidateins&apos;);</span><br><span class="line">SELECT AUTO_INCREMENT INTO auto_incr2 FROM information_schema.TABLES WHERE TABLE_SCHEMA = SCHEMA() and UPPER(TABLE_NAME) = UPPER(&apos;cop_thisliquidateins&apos;);</span><br><span class="line">    IF (auto_incr2 &gt; auto_incr1) THEN</span><br><span class="line">      SET NEW.liquidate_ins_id = last_insert_id(auto_incr2);</span><br><span class="line">    END IF;</span><br><span class="line">  END IF;</span><br><span class="line">END;</span><br><span class="line">delimiter ;</span><br></pre></td></tr></table></figure>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://bugs.mysql.com/bug.php?id=199" target="_blank" rel="noopener">Mysql bugs</a></p>
+<p><a href="https://www.slicewise.net/index.php?id=82" target="_blank" rel="noopener">触发器方案</a></p>
 
       
     </div>
@@ -233,18 +236,18 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/05/19/Java根据模板生成PDF文件/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/05/19/常见的设计思路/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
-          Java根据模板生成PDF文件
+          常见的设计思路
         
       </div>
     </a>
   
   
-    <a href="/2018/05/03/HashMap源码解读/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">java8 HashMap源码解读</div>
+    <a href="/2018/05/19/Java根据模板生成PDF文件/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Java根据模板生成PDF文件</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -290,7 +293,7 @@
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="iLink项目回顾" data-title="iLink项目回顾" data-url="http://tylorliu.github.io/2018/05/03/iLink项目回顾/"></div>
+	<div class="ds-thread" data-thread-key="归档历史表后Mysql重启自增主键重置问题" data-title="Mysql重启导致历史表归档主键冲突" data-url="http://tylorliu.github.io/2018/05/19/归档历史表后Mysql重启自增主键重置问题/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
