@@ -4,19 +4,19 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>常见的设计思路 | Tylor&#39;s Home</title>
+  <title>iLink项目回顾 | Tylor&#39;s Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="设计并无定规，但是成功的设计总有值得借鉴的地方。计算机科学博大精深，其中包含了大量优秀的设计理念，近期学习偶有所获，在此记下。 缓存缓存在IT技术中非常常见，它的定义是什么？我认为缓存技术的初衷是解决了两个问题：  减小计算机CPU运算速度与存储介质IO速度的巨大差异 存放中间运算结果除了最初的cpu与内存间的缓存，陆续又涌现出内存与硬盘间、客户端与浏览器端的缓存。但是作用无外乎这两种： 减小不同">
-<meta name="keywords" content="设计">
+  <meta name="description" content="iLink综合前置是我初入职场参与的第一个项目，但是在项目的架构思路、业务复杂度、技术含量方面上依然可圈可点。 简介首先，项目的定位是银行ESB系统，即银行的企业服务总线，兼具统合银行现有业务系统和快速开发新业务的能力。项目由三部分组成：  核心运行平台：OSGI框架开发的后台系统，运行二次开发平台导出的业务包 二次开发平台：RCP开发的银行业务开发工具，可视化编辑业务流，可自定义各种业务组件。（">
+<meta name="keywords" content="iLink">
 <meta property="og:type" content="article">
-<meta property="og:title" content="常见的设计思路">
-<meta property="og:url" content="http://tylorliu.github.io/2018/05/19/常见的设计思路/index.html">
+<meta property="og:title" content="iLink项目回顾">
+<meta property="og:url" content="http://tylorliu.github.io/2020/10/14/iLink项目回顾/index.html">
 <meta property="og:site_name" content="Tylor&#39;s Home">
-<meta property="og:description" content="设计并无定规，但是成功的设计总有值得借鉴的地方。计算机科学博大精深，其中包含了大量优秀的设计理念，近期学习偶有所获，在此记下。 缓存缓存在IT技术中非常常见，它的定义是什么？我认为缓存技术的初衷是解决了两个问题：  减小计算机CPU运算速度与存储介质IO速度的巨大差异 存放中间运算结果除了最初的cpu与内存间的缓存，陆续又涌现出内存与硬盘间、客户端与浏览器端的缓存。但是作用无外乎这两种： 减小不同">
-<meta property="og:updated_time" content="2018-05-19T04:52:43.230Z">
+<meta property="og:description" content="iLink综合前置是我初入职场参与的第一个项目，但是在项目的架构思路、业务复杂度、技术含量方面上依然可圈可点。 简介首先，项目的定位是银行ESB系统，即银行的企业服务总线，兼具统合银行现有业务系统和快速开发新业务的能力。项目由三部分组成：  核心运行平台：OSGI框架开发的后台系统，运行二次开发平台导出的业务包 二次开发平台：RCP开发的银行业务开发工具，可视化编辑业务流，可自定义各种业务组件。（">
+<meta property="og:updated_time" content="2018-05-03T13:35:40.336Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="常见的设计思路">
-<meta name="twitter:description" content="设计并无定规，但是成功的设计总有值得借鉴的地方。计算机科学博大精深，其中包含了大量优秀的设计理念，近期学习偶有所获，在此记下。 缓存缓存在IT技术中非常常见，它的定义是什么？我认为缓存技术的初衷是解决了两个问题：  减小计算机CPU运算速度与存储介质IO速度的巨大差异 存放中间运算结果除了最初的cpu与内存间的缓存，陆续又涌现出内存与硬盘间、客户端与浏览器端的缓存。但是作用无外乎这两种： 减小不同">
+<meta name="twitter:title" content="iLink项目回顾">
+<meta name="twitter:description" content="iLink综合前置是我初入职场参与的第一个项目，但是在项目的架构思路、业务复杂度、技术含量方面上依然可圈可点。 简介首先，项目的定位是银行ESB系统，即银行的企业服务总线，兼具统合银行现有业务系统和快速开发新业务的能力。项目由三部分组成：  核心运行平台：OSGI框架开发的后台系统，运行二次开发平台导出的业务包 二次开发平台：RCP开发的银行业务开发工具，可视化编辑业务流，可自定义各种业务组件。（">
   
     <link rel="alternative" href="/atom.xml" title="Tylor&#39;s Home" type="application/atom+xml">
   
@@ -110,7 +110,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/ClassLoader/" style="font-size: 10px;">ClassLoader</a> <a href="/tags/HTTP/" style="font-size: 10px;">HTTP</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/JDK/" style="font-size: 20px;">JDK</a> <a href="/tags/JPA/" style="font-size: 10px;">JPA</a> <a href="/tags/JVM/" style="font-size: 16.67px;">JVM</a> <a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a> <a href="/tags/Mybatis/" style="font-size: 10px;">Mybatis</a> <a href="/tags/Mysql/" style="font-size: 10px;">Mysql</a> <a href="/tags/PostgreSQL/" style="font-size: 10px;">PostgreSQL</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/WebService/" style="font-size: 16.67px;">WebService</a> <a href="/tags/WinRAR/" style="font-size: 10px;">WinRAR</a> <a href="/tags/XML/" style="font-size: 10px;">XML</a> <a href="/tags/cxf/" style="font-size: 10px;">cxf</a> <a href="/tags/iLink/" style="font-size: 10px;">iLink</a> <a href="/tags/itext5/" style="font-size: 10px;">itext5</a> <a href="/tags/java/" style="font-size: 10px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/tools/" style="font-size: 13.33px;">tools</a> <a href="/tags/命令/" style="font-size: 10px;">命令</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/性能/" style="font-size: 10px;">性能</a> <a href="/tags/设计/" style="font-size: 10px;">设计</a>
+						<a href="/tags/ClassLoader/" style="font-size: 10px;">ClassLoader</a> <a href="/tags/HTTP/" style="font-size: 10px;">HTTP</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/JDK/" style="font-size: 20px;">JDK</a> <a href="/tags/JPA/" style="font-size: 10px;">JPA</a> <a href="/tags/JVM/" style="font-size: 16.67px;">JVM</a> <a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a> <a href="/tags/Mybatis/" style="font-size: 10px;">Mybatis</a> <a href="/tags/Mysql/" style="font-size: 10px;">Mysql</a> <a href="/tags/PostgreSQL/" style="font-size: 10px;">PostgreSQL</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/WebService/" style="font-size: 16.67px;">WebService</a> <a href="/tags/WinRAR/" style="font-size: 10px;">WinRAR</a> <a href="/tags/XML/" style="font-size: 10px;">XML</a> <a href="/tags/cxf/" style="font-size: 10px;">cxf</a> <a href="/tags/iLink/" style="font-size: 10px;">iLink</a> <a href="/tags/itext5/" style="font-size: 10px;">itext5</a> <a href="/tags/java/" style="font-size: 10px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/tools/" style="font-size: 13.33px;">tools</a> <a href="/tags/命令/" style="font-size: 10px;">命令</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/性能/" style="font-size: 10px;">性能</a> <a href="/tags/设计/" style="font-size: 10px;">设计</a>
 					</div>
 				</section>
 				
@@ -176,11 +176,11 @@
 	</div>
 </nav>
 
-      <div class="body-wrap"><article id="post-常见的设计思路" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-iLink项目回顾" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/05/19/常见的设计思路/" class="article-date">
-  	<time datetime="2018-05-19T04:52:43.229Z" itemprop="datePublished">2018-05-19</time>
+      <a href="/2020/10/14/iLink项目回顾/" class="article-date">
+  	<time datetime="2020-10-14T14:30:12.919Z" itemprop="datePublished">2020-10-14</time>
 </a>
     </div>
   
@@ -193,7 +193,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      常见的设计思路
+      iLink项目回顾
     </h1>
   
 
@@ -202,7 +202,7 @@
       <div class="article-info article-info-post">
         
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/设计/">设计</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iLink/">iLink</a></li></ul>
 	</div>
 
         
@@ -217,42 +217,14 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>设计并无定规，但是成功的设计总有值得借鉴的地方。<br>计算机科学博大精深，其中包含了大量优秀的设计理念，近期学习偶有所获，在此记下。</p>
-<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>缓存在IT技术中非常常见，它的定义是什么？<br>我认为缓存技术的初衷是解决了两个问题：</p>
-<ol>
-<li>减小计算机CPU运算速度与存储介质IO速度的巨大差异</li>
-<li>存放中间运算结果<br>除了最初的cpu与内存间的缓存，陆续又涌现出内存与硬盘间、客户端与浏览器端的缓存。<br>但是作用无外乎这两种：</li>
-<li>减小不同部件之间的处理速度差异</li>
-<li>暂时存放结果<br>而目的只有一个：加快处理速度，减少响应时间。<br>原理则是空间换时间，在IO速度快的存储介质上保存冗余的数据备份，就可以避免读低速的存储介质或者重复复杂的运算。<br>缓存有2个基本问题需要解决：</li>
-<li>缓存容量有限<br>缓存一般采用IO快的存储介质，容量相对较小，一般存不了所有数据，缓存满了怎么办？很简单，清除掉部分数据就可以了，但是清除哪些比较合适呢？<br>常见的策略有：<ul>
-<li>FIFO：先进先出，淘汰年龄最大的数据 （队列）</li>
-<li>LRU：Least Recently Used，淘汰最近没用过的 （链表）</li>
-<li>LFU：Least Frequently Used，淘汰使用频率最低的 （SkipList）<br>根据实际场景选择适合的策略。</li>
+        <p>iLink综合前置是我初入职场参与的第一个项目，但是在项目的架构思路、业务复杂度、技术含量方面上依然可圈可点。</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>首先，项目的定位是银行ESB系统，即银行的企业服务总线，兼具统合银行现有业务系统和快速开发新业务的能力。项目由三部分组成：</p>
+<ul>
+<li>核心运行平台：OSGI框架开发的后台系统，运行二次开发平台导出的业务包</li>
+<li>二次开发平台：RCP开发的银行业务开发工具，可视化编辑业务流，可自定义各种业务组件。（JBPM流程复用）</li>
+<li>运维监控平台：监控核心平台的运行，提供实时告警和业务报表等功能</li>
 </ul>
-</li>
-<li>数据的时效性<br>数据可能会变更，导致缓存失效。相应的，缓存有失效策略：<ul>
-<li>过期失效<br> 设置过期时间，不使用过期数据，比如浏览器缓存、Redis</li>
-<li>缓存更新<ul>
-<li>Cache Aside 更新操作完成后，使缓存失效</li>
-<li>Read/Write Through 缓存代理数据读写</li>
-<li>Write Behind 异步批量更新数据库，性能高，逻辑复杂，牺牲强一致性</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-<p>并发情况下可能出现的问题：</p>
-<ol>
-<li>缓存并发<br>防止并发未命中时重复建立缓存。<br>思路: 缓存未命中时，tryLock(key),上锁成功的线程通过查询or计算更新缓存，否则block。<br>java中可缓存future对象，防止重复运算。</li>
-<li>缓存穿透<br>防止反复查询不存在的值。可缓存空值</li>
-<li>缓存批量过期导致雪崩<h3 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h3>锁解决的问题：保证并发情况下数据一致性。<br>应用程序通常采用 CAS或锁机制保证数据一致性，CAS底层采用系统命令，硬件层锁内存总线。<br>JVM通过Compare and Swap修改对象头中的锁状态实现加锁。<br>数据库中将锁分为共享锁和互斥锁，实现读写分离。</li>
-</ol>
-<h3 id="池"><a href="#池" class="headerlink" title="池"></a>池</h3><p>池的作用：管理并重复利用资源</p>
-<ol>
-<li>资源创建、销毁开销比较大</li>
-<li>资源无限制的创建会导致系统崩溃<br>常见的有：线程池、数据连接池</li>
-</ol>
-<h3 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h3><h3 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h3>
+
       
     </div>
     
@@ -261,18 +233,18 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/05/19/踩坑记5-Mybatis合集/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2020/10/14/HashMap源码解读/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
-          踩坑记5-Mybatis合集
+          java8 HashMap源码解读
         
       </div>
     </a>
   
   
-    <a href="/2018/05/19/归档历史表后Mysql重启自增主键重置问题/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Mysql重启导致历史表归档主键冲突</div>
+    <a href="/2020/09/04/使用Python做分词统计遇到的几个问题/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">使用Python做分词统计遇到的几个问题</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -318,7 +290,7 @@
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="常见的设计思路" data-title="常见的设计思路" data-url="http://tylorliu.github.io/2018/05/19/常见的设计思路/"></div>
+	<div class="ds-thread" data-thread-key="iLink项目回顾" data-title="iLink项目回顾" data-url="http://tylorliu.github.io/2020/10/14/iLink项目回顾/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
