@@ -177,6 +177,85 @@
 
       <div class="body-wrap">
   
+    <article id="post-synchronized&amp;Lock比较" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/13/synchronized&Lock比较/" class="article-date">
+  	<time datetime="2018-03-13T11:25:00.000Z" itemprop="datePublished">2018-03-13</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/13/synchronized&Lock比较/">Lock源码浅析</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Lock"><a href="#Lock" class="headerlink" title="Lock"></a>Lock</h3><p>先看Lock接口<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Lock</span> </span>&#123;</span><br><span class="line">    <span class="comment">//获取锁</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">//获取锁过程中监听中断状态</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lockInterruptibly</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">    <span class="comment">//尝试获取锁，立即返回true或false</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">//一定时间内尝试获取锁，允许中断</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> time, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">    <span class="comment">//释放锁，一般在finally中</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">//返回一个新建的Condition，用于实现wait/signal机制，释放锁并等待唤醒；应用：阻塞队列、CyclicBarrier、线程池等</span></span><br><span class="line">    <span class="function">Condition <span class="title">newCondition</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Lock比synchronized更灵活</p>
+<ul>
+<li>允许中断</li>
+<li>可以设置等待时限</li>
+<li>通过返回判断状态</li>
+</ul>
+<p>还提供了Object wait/notify的增强版，方便线程协作。</p>
+<h3 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h3><p>再来看Lock的实现ReentrantLock,除了Lock规定的方法，它还提供了一些额外的方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReentrantLock</span> <span class="keyword">implements</span> <span class="title">Lock</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="title">ReentrantLock</span><span class="params">(<span class="keyword">boolean</span> fair)</span> </span>&#123;</span><br><span class="line">          sync = fair ? <span class="keyword">new</span> FairSync() : <span class="keyword">new</span> NonfairSync();</span><br><span class="line">      &#125;</span><br><span class="line">      </span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getHoldCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">          <span class="keyword">return</span> sync.getHoldCount();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isHeldByCurrentThread</span><span class="params">()</span> </span>&#123;</span><br><span class="line">          <span class="keyword">return</span> sync.isHeldExclusively();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isLocked</span><span class="params">()</span> </span>&#123;</span><br><span class="line">          <span class="keyword">return</span> sync.isLocked();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">hasQueuedThreads</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         <span class="keyword">return</span> sync.hasQueuedThreads();</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">hasQueuedThread</span><span class="params">(Thread thread)</span> </span>&#123;</span><br><span class="line">         <span class="keyword">return</span> sync.isQueued(thread);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getQueueLength</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         <span class="keyword">return</span> sync.getQueueLength();</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="function"><span class="keyword">protected</span> Collection&lt;Thread&gt; <span class="title">getQueuedThreads</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         <span class="keyword">return</span> sync.getQueuedThreads();</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasWaiters</span><span class="params">(Condition condition)</span> </span>&#123;</span><br><span class="line">         <span class="keyword">if</span> (condition == <span class="keyword">null</span>)</span><br><span class="line">             <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">         <span class="keyword">if</span> (!(condition <span class="keyword">instanceof</span> AbstractQueuedSynchronizer.ConditionObject))</span><br><span class="line">             <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"not owner"</span>);</span><br><span class="line">         <span class="keyword">return</span> sync.hasWaiters((AbstractQueuedSynchronizer.ConditionObject)condition);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getWaitQueueLength</span><span class="params">(Condition condition)</span> </span>&#123;</span><br><span class="line">         <span class="keyword">if</span> (condition == <span class="keyword">null</span>)</span><br><span class="line">             <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">         <span class="keyword">if</span> (!(condition <span class="keyword">instanceof</span> AbstractQueuedSynchronizer.ConditionObject))</span><br><span class="line">             <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"not owner"</span>);</span><br><span class="line">         <span class="keyword">return</span> sync.getWaitQueueLength((AbstractQueuedSynchronizer.ConditionObject)condition);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="function"><span class="keyword">protected</span> Collection&lt;Thread&gt; <span class="title">getWaitingThreads</span><span class="params">(Condition condition)</span> </span>&#123;</span><br><span class="line">         <span class="keyword">if</span> (condition == <span class="keyword">null</span>)</span><br><span class="line">             <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">         <span class="keyword">if</span> (!(condition <span class="keyword">instanceof</span> AbstractQueuedSynchronizer.ConditionObject))</span><br><span class="line">             <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"not owner"</span>);</span><br><span class="line">         <span class="keyword">return</span> sync.getWaitingThreads((AbstractQueuedSynchronizer.ConditionObject)condition);</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>以上方法主要提供3个方面的功能：</p>
+<ul>
+<li>公平锁实现</li>
+<li>锁的状态(包括持锁线程、重入次数、排队线程等)</li>
+<li>Condtion相关状态</li>
+</ul>
+<h3 id="ReentrantReadWriteLock"><a href="#ReentrantReadWriteLock" class="headerlink" title="ReentrantReadWriteLock"></a>ReentrantReadWriteLock</h3><p>读写锁<br>ReentrantReadWriteLock包含readLock和writeLock，共享一个Syn子，其中readLock为共享锁，writeLock为排他锁，实现读写锁分离。</p>
+<h3 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a>synchronized</h3><p>修饰代码段或方法，非公平互斥锁，需指定对象。</p>
+<h3 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h3><ul>
+<li>防止指令重排</li>
+<li>变量使用前从主存刷新</li>
+</ul>
+<h3 id="Condition应用"><a href="#Condition应用" class="headerlink" title="Condition应用"></a>Condition应用</h3><pre><code>- BlockingQueue
+    - notEmpty.signal()
+    - notFull.signal()
+- CyclicBarrier
+    - trip.signalAll()
+- ScheduledThreadPoolExecutor
+</code></pre>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-wsimport和xjc命令" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -604,93 +683,6 @@
       
 	<div class="article-category tagcloud">
 	<a class="article-category-link" href="/categories/note/">note</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Linux服务器性能参数" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/02/10/Linux服务器性能参数/" class="article-date">
-  	<time datetime="2018-02-10T06:42:00.000Z" itemprop="datePublished">2018-02-10</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/10/Linux服务器性能参数/">Linux服务器性能优化参数</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h3><p>service iptables start<br>iptables -F</p>
-<h3 id="网络连接相关"><a href="#网络连接相关" class="headerlink" title="网络连接相关"></a>网络连接相关</h3><p>sysctl -w netfilter.ip_conntrack_tcp_timeout_time_wait=10<br>sysctl -w net.ipv4.netfilter.ip_conntrack_tcp_timeout_close=10<br>netstat -n |grep 8846 | awk ‘/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}’  端口使用状态统计</p>
-<h4 id="统一修改配置文件-etc-sysctl-conf"><a href="#统一修改配置文件-etc-sysctl-conf" class="headerlink" title="统一修改配置文件 /etc/sysctl.conf"></a>统一修改配置文件 /etc/sysctl.conf</h4><p>加入以下内容：<br>net.ipv4.tcp_syncookies = 1<br>表示开启SYN Cookies。；<br>net.ipv4.tcp_tw_reuse = 1<br>表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；<br>net.ipv4.tcp_tw_recycle = 1<br>表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。<br>net.ipv4.tcp_fin_timeout = 30<br>表示如果套接字由本端要求关闭，这个参数决定了它保持在FIN-WAIT-2状态的时间。<br>net.ipv4.ip_local_port_range = 1024 65000<br>修改端口范围，默认是32768 61000<br>net.ipv4.tcp_max_tw_buckets = 3000</p>
-<p>当time_out达到多少以后，系统自动释放链接</p>
-<p>执行 /sbin/sysctl -p 让参数生效</p>
-<h3 id="修改文件配置"><a href="#修改文件配置" class="headerlink" title="修改文件配置"></a>修改文件配置</h3><p>/proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_time_wait  值从原来的120改为10<br>这是tcp连接中断后系统等待的释放的时间, 否则在高并发下面产生大量的time_out，导致无法连接</p>
-<ol>
-<li><p>查看网络TCP连接状态命令<br>#netstat -n | awk ‘/^tcp/ {++state[$NF]} END {for(key in state) print key,”\t”,state[key]}’</p>
-</li>
-<li><p>查看Timeout配置命令<br>#sysctl -a | grep time | grep wait</p>
-</li>
-</ol>
-<p>文件打开数设置<br>ulimit -n</p>
-<ol>
-<li>修改/etc/security/limits.conf文件，在文件中添加如下行：</li>
-</ol>
-<ul>
-<li>soft nofile 10240</li>
-<li>hard nofile 10240</li>
-</ul>
-<ol>
-<li>修改/etc/pam.d/login文件，在文件中添加如下行：<br>session required /lib/security/pam_limits.so</li>
-<li>查看Linux系统级的最大打开文件数限制，使用如下命令：<br>cat /proc/sys/fs/file-max<br>修改  ： echo 22158 &gt; /proc/sys/fs/file-max</li>
-<li>修改用户打开数限制<br>echo ulimit -HSn 65536 &gt;&gt; /etc/rc.local<br>echo ulimit -HSn 65536 &gt;&gt;/root/.bash_profile<br>ulimit -HSn 65536</li>
-</ol>
-<h3 id="数据库相关"><a href="#数据库相关" class="headerlink" title="数据库相关"></a>数据库相关</h3><p>alter database clear unarchived logfile group 7;</p>
-<p>alter system set DB_RECOVERY_FILE_DEST_SIZE=20g;</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/性能/">性能</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/tips/">tips</a>
 	</div>
 
 

@@ -177,6 +177,95 @@
 
       <div class="body-wrap">
   
+    <article id="post-Java8函数式编程学习" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/02/01/Java8函数式编程学习/" class="article-date">
+  	<time datetime="2018-02-01T14:30:08.000Z" itemprop="datePublished">2018-02-01</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/01/Java8函数式编程学习/">Java8函数式编程学习</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Java8中新增FunctionalInterface注解用来标记函数式接口，并且定义了4种基本函数式接口：</p>
+<ul>
+<li>Function<ul>
+<li>R apply(T t); 接收T类型参数，返回R类型结果</li>
+<li>default compose(Function before) 参数前处理</li>
+<li>default andThen(Function after) 结果后处理</li>
+</ul>
+</li>
+<li>Predicate<ul>
+<li>boolean test(T t); 接收参数，返回布尔值</li>
+<li>default and 逻辑与</li>
+<li>default negate 逻辑非</li>
+<li>default or 逻辑或</li>
+</ul>
+</li>
+<li>Supplier<ul>
+<li>T get();</li>
+</ul>
+</li>
+<li>Consumer<ul>
+<li>void accept(T t);</li>
+<li>default andThen(Consumer after)</li>
+</ul>
+</li>
+</ul>
+<p>如果忽略 default方法的话，我们可以把function视为一个一元函数，单个输入，单个输出。<br>而Predicate则是固定结果类型为boolean的function，Supplier是一个无参函数，Consumer 无返回的函数。<br>其中，Function、Predicate、Consumer都有default方法支持连续式调用，而且都有Bi系列支持双参数。<br>另外，每种接口还有相应的基本类型接口。</p>
+<p>示例<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">BiFunction&lt;String,String,Integer&gt; add =</span><br><span class="line">    (x,y)-&gt;Integer.parseInt(x)+Integer.parseInt(y);</span><br><span class="line">Function&lt;Integer,Integer&gt;  square = x-&gt; x*x;</span><br><span class="line">Predicate&lt;Integer&gt; predicate = x-&gt; x&gt;<span class="number">100</span>;</span><br><span class="line">BiPredicate&lt;String,String&gt; biPredicate = (x,y)-&gt;&#123;</span><br><span class="line">    <span class="keyword">return</span> predicate.test(add.andThen(square).apply(x,y));</span><br><span class="line">&#125;;</span><br><span class="line">System.out.println(biPredicate.test(<span class="string">"5"</span>,<span class="string">"6"</span>));</span><br></pre></td></tr></table></figure></p>
+<p>这个例子没有加任何注释，但是应该还算通俗易懂。<br>相比于命令式编程，这种方式应该更符合我们的思维习惯。<br>通过函数式编程来定义运算的方式，而不再拘泥于过程中每一步对象的维护，<br>我们可以更多的关注、更清晰的体现运算逻辑，提升coding的体验和代码可读性。</p>
+<p>写这个例子的过程，我甚至回想起了学生时代做数学题的感觉，如果现在的学生能写代码来解数学题，相信也是一种很有成就感的体验。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JDK/">JDK</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/blog/">blog</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-JVM内存溢出分析" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -496,81 +585,6 @@
       
 	<div class="article-category tagcloud">
 	<a class="article-category-link" href="/categories/troubleshooting/">troubleshooting</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Linux修改文件权限" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/22/Linux修改文件权限/" class="article-date">
-  	<time datetime="2018-01-22T14:30:08.000Z" itemprop="datePublished">2018-01-22</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/22/Linux修改文件权限/">Linux修改文件权限</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>三位二进制树表示权限值:</p>
-<ol>
-<li>可读</li>
-<li>可写</li>
-<li>可执行</li>
-</ol>
-<p>例如：101 =5，表示可读可执行，不可写</p>
-<hr>
-<p>每个文件分3组权限，<br>1.所属人权限<br>2.同组用户权限<br>3.其他组用户权限</p>
-<p>使用以下形式修改文件权限。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod -R 权限值 文件名</span><br></pre></td></tr></table></figure>
-<p>-R表示递归<br>对文件夹及其所有内容开放所有权限：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod -R 777 foldname</span><br></pre></td></tr></table></figure></p>
-<p>PS:查看文件权限命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -l</span><br></pre></td></tr></table></figure>
-<p>授权<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -s</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/blog/">blog</a>
 	</div>
 
 

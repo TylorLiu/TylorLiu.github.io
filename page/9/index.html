@@ -177,6 +177,81 @@
 
       <div class="body-wrap">
   
+    <article id="post-Linux修改文件权限" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/01/22/Linux修改文件权限/" class="article-date">
+  	<time datetime="2018-01-22T14:30:08.000Z" itemprop="datePublished">2018-01-22</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/22/Linux修改文件权限/">Linux修改文件权限</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>三位二进制树表示权限值:</p>
+<ol>
+<li>可读</li>
+<li>可写</li>
+<li>可执行</li>
+</ol>
+<p>例如：101 =5，表示可读可执行，不可写</p>
+<hr>
+<p>每个文件分3组权限，<br>1.所属人权限<br>2.同组用户权限<br>3.其他组用户权限</p>
+<p>使用以下形式修改文件权限。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod -R 权限值 文件名</span><br></pre></td></tr></table></figure>
+<p>-R表示递归<br>对文件夹及其所有内容开放所有权限：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod -R 777 foldname</span><br></pre></td></tr></table></figure></p>
+<p>PS:查看文件权限命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -l</span><br></pre></td></tr></table></figure>
+<p>授权<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -s</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/blog/">blog</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-倒腾Hexo博客全过程" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">

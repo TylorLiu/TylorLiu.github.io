@@ -177,6 +177,93 @@
 
       <div class="body-wrap">
   
+    <article id="post-Linux服务器性能参数" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/02/10/Linux服务器性能参数/" class="article-date">
+  	<time datetime="2018-02-10T06:42:00.000Z" itemprop="datePublished">2018-02-10</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/10/Linux服务器性能参数/">Linux服务器性能优化参数</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h3><p>service iptables start<br>iptables -F</p>
+<h3 id="网络连接相关"><a href="#网络连接相关" class="headerlink" title="网络连接相关"></a>网络连接相关</h3><p>sysctl -w netfilter.ip_conntrack_tcp_timeout_time_wait=10<br>sysctl -w net.ipv4.netfilter.ip_conntrack_tcp_timeout_close=10<br>netstat -n |grep 8846 | awk ‘/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}’  端口使用状态统计</p>
+<h4 id="统一修改配置文件-etc-sysctl-conf"><a href="#统一修改配置文件-etc-sysctl-conf" class="headerlink" title="统一修改配置文件 /etc/sysctl.conf"></a>统一修改配置文件 /etc/sysctl.conf</h4><p>加入以下内容：<br>net.ipv4.tcp_syncookies = 1<br>表示开启SYN Cookies。；<br>net.ipv4.tcp_tw_reuse = 1<br>表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；<br>net.ipv4.tcp_tw_recycle = 1<br>表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。<br>net.ipv4.tcp_fin_timeout = 30<br>表示如果套接字由本端要求关闭，这个参数决定了它保持在FIN-WAIT-2状态的时间。<br>net.ipv4.ip_local_port_range = 1024 65000<br>修改端口范围，默认是32768 61000<br>net.ipv4.tcp_max_tw_buckets = 3000</p>
+<p>当time_out达到多少以后，系统自动释放链接</p>
+<p>执行 /sbin/sysctl -p 让参数生效</p>
+<h3 id="修改文件配置"><a href="#修改文件配置" class="headerlink" title="修改文件配置"></a>修改文件配置</h3><p>/proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_time_wait  值从原来的120改为10<br>这是tcp连接中断后系统等待的释放的时间, 否则在高并发下面产生大量的time_out，导致无法连接</p>
+<ol>
+<li><p>查看网络TCP连接状态命令<br>#netstat -n | awk ‘/^tcp/ {++state[$NF]} END {for(key in state) print key,”\t”,state[key]}’</p>
+</li>
+<li><p>查看Timeout配置命令<br>#sysctl -a | grep time | grep wait</p>
+</li>
+</ol>
+<p>文件打开数设置<br>ulimit -n</p>
+<ol>
+<li>修改/etc/security/limits.conf文件，在文件中添加如下行：</li>
+</ol>
+<ul>
+<li>soft nofile 10240</li>
+<li>hard nofile 10240</li>
+</ul>
+<ol>
+<li>修改/etc/pam.d/login文件，在文件中添加如下行：<br>session required /lib/security/pam_limits.so</li>
+<li>查看Linux系统级的最大打开文件数限制，使用如下命令：<br>cat /proc/sys/fs/file-max<br>修改  ： echo 22158 &gt; /proc/sys/fs/file-max</li>
+<li>修改用户打开数限制<br>echo ulimit -HSn 65536 &gt;&gt; /etc/rc.local<br>echo ulimit -HSn 65536 &gt;&gt;/root/.bash_profile<br>ulimit -HSn 65536</li>
+</ol>
+<h3 id="数据库相关"><a href="#数据库相关" class="headerlink" title="数据库相关"></a>数据库相关</h3><p>alter database clear unarchived logfile group 7;</p>
+<p>alter system set DB_RECOVERY_FILE_DEST_SIZE=20g;</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/性能/">性能</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/tips/">tips</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-踩坑记3—CXF ws服务端改用SpringWs实现" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -608,95 +695,6 @@
       
 	<div class="article-tag tagcloud">
 		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClassLoader/">ClassLoader</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JDK/">JDK</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/blog/">blog</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Java8函数式编程学习" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/02/01/Java8函数式编程学习/" class="article-date">
-  	<time datetime="2018-02-01T14:30:08.000Z" itemprop="datePublished">2018-02-01</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/01/Java8函数式编程学习/">Java8函数式编程学习</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Java8中新增FunctionalInterface注解用来标记函数式接口，并且定义了4种基本函数式接口：</p>
-<ul>
-<li>Function<ul>
-<li>R apply(T t); 接收T类型参数，返回R类型结果</li>
-<li>default compose(Function before) 参数前处理</li>
-<li>default andThen(Function after) 结果后处理</li>
-</ul>
-</li>
-<li>Predicate<ul>
-<li>boolean test(T t); 接收参数，返回布尔值</li>
-<li>default and 逻辑与</li>
-<li>default negate 逻辑非</li>
-<li>default or 逻辑或</li>
-</ul>
-</li>
-<li>Supplier<ul>
-<li>T get();</li>
-</ul>
-</li>
-<li>Consumer<ul>
-<li>void accept(T t);</li>
-<li>default andThen(Consumer after)</li>
-</ul>
-</li>
-</ul>
-<p>如果忽略 default方法的话，我们可以把function视为一个一元函数，单个输入，单个输出。<br>而Predicate则是固定结果类型为boolean的function，Supplier是一个无参函数，Consumer 无返回的函数。<br>其中，Function、Predicate、Consumer都有default方法支持连续式调用，而且都有Bi系列支持双参数。<br>另外，每种接口还有相应的基本类型接口。</p>
-<p>示例<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">BiFunction&lt;String,String,Integer&gt; add =</span><br><span class="line">    (x,y)-&gt;Integer.parseInt(x)+Integer.parseInt(y);</span><br><span class="line">Function&lt;Integer,Integer&gt;  square = x-&gt; x*x;</span><br><span class="line">Predicate&lt;Integer&gt; predicate = x-&gt; x&gt;<span class="number">100</span>;</span><br><span class="line">BiPredicate&lt;String,String&gt; biPredicate = (x,y)-&gt;&#123;</span><br><span class="line">    <span class="keyword">return</span> predicate.test(add.andThen(square).apply(x,y));</span><br><span class="line">&#125;;</span><br><span class="line">System.out.println(biPredicate.test(<span class="string">"5"</span>,<span class="string">"6"</span>));</span><br></pre></td></tr></table></figure></p>
-<p>这个例子没有加任何注释，但是应该还算通俗易懂。<br>相比于命令式编程，这种方式应该更符合我们的思维习惯。<br>通过函数式编程来定义运算的方式，而不再拘泥于过程中每一步对象的维护，<br>我们可以更多的关注、更清晰的体现运算逻辑，提升coding的体验和代码可读性。</p>
-<p>写这个例子的过程，我甚至回想起了学生时代做数学题的感觉，如果现在的学生能写代码来解数学题，相信也是一种很有成就感的体验。</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JDK/">JDK</a></li></ul>
 	</div>
 
       
