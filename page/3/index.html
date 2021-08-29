@@ -177,11 +177,11 @@
 
       <div class="body-wrap">
   
-    <article id="post-策略模式" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-使用Python做分词统计遇到的几个问题" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/03/26/策略模式/" class="article-date">
-  	<time datetime="2019-03-25T16:00:00.000Z" itemprop="datePublished">2019-03-26</time>
+      <a href="/2020/09/04/使用Python做分词统计遇到的几个问题/" class="article-date">
+  	<time datetime="2020-09-04T10:49:22.000Z" itemprop="datePublished">2020-09-04</time>
 </a>
     </div>
   
@@ -194,7 +194,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/26/策略模式/">策略模式</a>
+      <a class="article-title" href="/2020/09/04/使用Python做分词统计遇到的几个问题/">使用Python做分词统计遇到的几个问题</a>
     </h1>
   
 
@@ -203,28 +203,241 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="策略（Strategy）"><a href="#策略（Strategy）" class="headerlink" title="策略（Strategy）"></a>策略（Strategy）</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>在策略模式（Strategy Pattern）中，一个类的行为或其算法可以在运行时更改。这种类型的设计模式属于行为型模式。</p>
-<p>在策略模式中，我们创建表示各种策略的对象和一个行为随着策略对象改变而改变的 context 对象。策略对象改变 context 对象的执行算法。</p>
-<h3 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h3><p>定义一系列算法，封装每个算法，并使它们可以互换。</p>
-<p>策略模式可以让算法独立于使用它的客户端。</p>
+        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>工作中需要对几百条问题原因进行分类汇总，分析出主要是哪些方面做的不到位，并进行针对性的改进。最开始想通过Excel统计，但是很繁琐，麻烦在于：</p>
+<ol>
+<li>不确定需要统计哪些词句的频率</li>
+<li>需要对输入数据进行整理，使同类原因有一个共性，才方便统计，比如”XXX不熟悉”、”YYY不了解”要统一改为”不了解”或”不熟悉”，才好统计</li>
+</ol>
+<h3 id="分词统计"><a href="#分词统计" class="headerlink" title="分词统计"></a>分词统计</h3><p>以前看过相关文章，让我想到了分词统计可以解决这类问题，搜了下，找到<a href="https://blog.csdn.net/weixin_43886356/article/details/86711012" target="_blank" rel="noopener">这篇文章</a>。<br>然后就开始照搬，遇到了一系列的问题，记录如下：</p>
+<ol>
+<li>python2.7 安装pip20报错，查了下只能装pip9 （HUI框架需要装Python，令人费解）</li>
+<li>python2.7 不支持file.open传encoding，代码报错<br> 将文件编码转成GBK，代码去掉encoding参数</li>
+<li>SyntaxError: Non-ASCII character ‘\xe6’ in file<br>python运行源码报错，在第一行加 # coding=UTF-8解决</li>
+<li>无法调用Jieba库–module ‘jieba’ has no attribute ‘Icut’<br>文件名是jieba.py，与import jieba冲突。改文件名解决。<br><a href="https://github.com/fxsjy/jieba/issues/715" target="_blank" rel="noopener">参考</a></li>
+<li>UnicodeEncodeError: ‘ascii’ codec can’t encode character in position 0: ordinal not in range(128)<br> 未查到具体原因，怀疑是python2的问题，决定升级python3。后来判断可能是终端只能输出Ascii码，而分词后要输出中文字符<br> <a href="https://stackoverflow.com/questions/20923663/unicodeencodeerror-ascii-codec-cant-encode-character-in-position-0-ordinal" target="_blank" rel="noopener">参考</a></li>
+<li>下载Python官网安装包各种失败，连手机无线也慢如龟爬，找了个现成的33装了，发现装pip要setuptools，装setuptools要pip。还是要下载Python3.5以后版本，自带pip、setuptools，省心。<br> 一通搜索，终于在Bing上搜到到了淘宝镜像，才很快下载好。（遇到这种官网上下载慢的，要么找国内镜像，要么翻墙，省心省力。用百度搜简直就是翻垃圾堆，找了半天下载下来发现带毒。</li>
+<li>装完Python37之后，抄来的程序终于运行成功（所以搞不清问题5到底是啥原因了，以后有空了再去用Python27研究一下。PS:八成不会）。发现统计的数量有问题，“考虑”出现过42次，但是只统计到27次。<br> 小改了下程序，排除“考虑”，包含‘考’的词还有“考虑不周”，出现15次，是分开统计的，bingo。</li>
+</ol>
+<h3 id="修改后的代码"><a href="#修改后的代码" class="headerlink" title="修改后的代码"></a>修改后的代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"># coding=UTF-8</span><br><span class="line">import jieba</span><br><span class="line"></span><br><span class="line">file = open(&quot;ois.txt&quot;, &quot;r&quot;,encoding=&apos;utf-8&apos;)#此处需打开txt格式且编码为UTF-8的文本</span><br><span class="line">txt = file.read()</span><br><span class="line">words = jieba.lcut(txt)      # 使用jieba进行分词，将文本分成词语列表</span><br><span class="line">count = &#123;&#125;</span><br><span class="line">for word in words:            #  使用 for 循环遍历每个词语并统计个数</span><br><span class="line">    if len(word) &lt; 2:          # 排除单个字的干扰，使得输出结果为词语</span><br><span class="line">        continue</span><br><span class="line">    else:</span><br><span class="line">        count[word] = count.get(word, 0) + 1    #如果字典里键为 word 的值存在，则返回键的值并加一，如果不存在键word，则返回0再加上1</span><br><span class="line">        </span><br><span class="line">exclude = [&quot;记得&quot;, &quot;具体&quot;, &quot;原因&quot;]  # 建立无关词语列表</span><br><span class="line">for key in list(count.keys()):     # 遍历字典的所有键，即所有word</span><br><span class="line">	if key in exclude:</span><br><span class="line">		del count[key]                  #  删除字典中键为无关词语的键值对     </span><br><span class="line">list = list(count.items())         # 将字典的所有键值对转化为列表</span><br><span class="line">list.sort(key=lambda x: x[1], reverse=True)     # 对列表按照词频从大到小的顺序排序</span><br><span class="line">for i in range(5):  #   此处统计排名前五的单词，所以range(5)</span><br><span class="line">    word, number = list[i]</span><br><span class="line">    print(&quot;关键字：&#123;:-&lt;10&#125;频次：&#123;:+&gt;8&#125;&quot;.format(word, number))</span><br></pre></td></tr></table></figure>
+<h3 id="后续处理"><a href="#后续处理" class="headerlink" title="后续处理"></a>后续处理</h3><p> 分词统计出来的都是单词，比如：考虑、业务、设计等等，还需要把单词组成短语，然后将相同语义的短语归入一类进行统计，可以用NotePad++计数。语义统计和展示的方式就不再赘述。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/blog/">blog</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-观《天道》看授人以渔" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2020/05/27/观《天道》看授人以渔/" class="article-date">
+  	<time datetime="2020-05-27T01:42:38.000Z" itemprop="datePublished">2020-05-27</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/27/观《天道》看授人以渔/">观《天道》看授人以渔</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>看完《天道》之后，脑海中产生了很多感悟，却又纷乱复杂，没有头绪，难以诉诸语言和文字。<br>对于片中文化属性的提法还是雾里看花，无法琢磨。<br>偶然联想到古语中常说的“授人以鱼不如授人以渔”，不由的引发了对于王庙村扶贫究竟是授人以鱼还是授人以渔的思考。<br>丁元英指点欧阳雪买股票实际上是授人以鱼，虽然丁没有直接给鱼，而是告诉欧阳雪何时何处下网，何时捕捞。而王庙村呢，就很难判断，如果是授人以鱼，那王庙村的鱼是什么？如果是授人以渔，那渔又是什么？<br>如果是授人以鱼，我认为这个鱼就是丁提供的音响组装方案和格律诗公司+王庙村运作的架构方案，而通过专利申请和公司规范化管理的方式，这个鱼又可以看做渔，是王庙村脱贫的根本。<br>这又涉及到鱼与渔的分别。<br>    鱼：资源<br>    渔：获取资源的技能、方法<br>    如果把钱作为资源，那丁元英一直在授人以渔，包括对指点欧阳雪买股票。<br>    如果把能力作为资源，那丁元英对欧阳雪和王庙村就是授人以鱼，给与了他们一定时间内的赚钱的能力，买股票是一次性的，做音响相对而言是长期的。而这个层次的渔则是一种开悟，让人具备自己开发能力的意识和素质。</p>
+<p>鱼渔之喻不得究竟，根本上还是道术之分。有道无术，术尚可求。有术无道止于术。然道却难传，需要自悟，而悟道的契机才是丁元英的礼物。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/读后感/">读后感</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Linux常用命令" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/05/21/Linux常用命令/" class="article-date">
+  	<time datetime="2019-05-21T06:04:59.000Z" itemprop="datePublished">2019-05-21</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/21/Linux常用命令/">Linux常用命令</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li><p>tar</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//解压</span><br><span class="line">tar xf jdk-7u65-linux-x64.tar.gz -C /usr/local</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>netstat</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -anp|grep 5123</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>lsof -i 查看端口所属进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -i: 8080</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>df -h 查看硬盘占用</p>
+</li>
+<li>du -sh *  查当前文件夹下所有文件（夹）占用磁盘大小</li>
+</ol>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/blog/">blog</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-中介者模式" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/03/27/中介者模式/" class="article-date">
+  	<time datetime="2019-03-26T16:00:00.000Z" itemprop="datePublished">2019-03-27</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/27/中介者模式/">中介者模式</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="中介者（Mediator）"><a href="#中介者（Mediator）" class="headerlink" title="中介者（Mediator）"></a>中介者（Mediator）</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>中介者模式（Mediator Pattern）是用来降低多个对象和类之间的通信复杂性。这种模式提供了一个中介类，该类通常处理不同类之间的通信，并支持松耦合，使代码易于维护。中介者模式属于行为型模式。</p>
+<h3 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h3><p>集中相关对象之间复杂的沟通和控制方式。</p>
 <h3 id="Class-Diagram"><a href="#Class-Diagram" class="headerlink" title="Class Diagram"></a>Class Diagram</h3><ul>
-<li>Strategy 接口定义了一个算法族，它们都实现了  behavior() 方法。</li>
-<li>Context 是使用到该算法族的类，其中的 doSomething() 方法会调用 behavior()，setStrategy(Strategy) 方法可以动态地改变 strategy 对象，也就是说能动态地改变 Context 所使用的算法。</li>
+<li>Mediator：中介者，定义一个接口用于与各同事（Colleague）对象通信。</li>
+<li>Colleague：同事，相关对象</li>
 </ul>
-<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/cd1be8c2-755a-4a66-ad92-2e30f8f47922.png"> </div><br></p>
-<h3 id="与状态模式的比较"><a href="#与状态模式的比较" class="headerlink" title="与状态模式的比较"></a>与状态模式的比较</h3><p>状态模式的类图和策略模式类似，并且都是能够动态改变对象的行为。但是状态模式是通过状态转移来改变 Context 所组合的 State 对象，而策略模式是通过 Context 本身的决策来改变组合的 Strategy 对象。所谓的状态转移，是指 Context 在运行过程中由于一些条件发生改变而使得 State 对象发生改变，注意必须要是在运行过程中。</p>
-<p>状态模式主要是用来解决状态转移的问题，当状态发生转移了，那么 Context 对象就会改变它的行为；而策略模式主要是用来封装一组可以互相替代的算法族，并且可以根据需要动态地去替换 Context 使用的算法。</p>
-<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><p>设计一个鸭子，它可以动态地改变叫声。这里的算法族是鸭子的叫声行为。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">QuackBehavior</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">quack</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Quack</span> <span class="keyword">implements</span> <span class="title">QuackBehavior</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">quack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"quack!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Squeak</span> <span class="keyword">implements</span> <span class="title">QuackBehavior</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">quack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"squeak!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Duck</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> QuackBehavior quackBehavior;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">performQuack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (quackBehavior != <span class="keyword">null</span>) &#123;</span><br><span class="line">            quackBehavior.quack();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setQuackBehavior</span><span class="params">(QuackBehavior quackBehavior)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.quackBehavior = quackBehavior;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Duck duck = <span class="keyword">new</span> Duck();</span><br><span class="line">        duck.setQuackBehavior(<span class="keyword">new</span> Squeak());</span><br><span class="line">        duck.performQuack();</span><br><span class="line">        duck.setQuackBehavior(<span class="keyword">new</span> Quack());</span><br><span class="line">        duck.performQuack();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">squeak!</span><br><span class="line">quack!</span><br></pre></td></tr></table></figure>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/30d6e95c-2e3c-4d32-bf4f-68128a70bc05.png"> </div><br></p>
+<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><p>Alarm（闹钟）、CoffeePot（咖啡壶）、Calendar（日历）、Sprinkler（喷头）是一组相关的对象，在某个对象的事件产生时需要去操作其它对象，形成了下面这种依赖结构：</p>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/82cfda3b-b53b-4c89-9fdb-26dd2db0cd02.jpg"> </div><br></p>
+<p>使用中介者模式可以将复杂的依赖结构变成星形结构：</p>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/5359cbf5-5a79-4874-9b17-f23c53c2cb80.jpg"> </div><br></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Colleague</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(Mediator mediator)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Alarm</span> <span class="keyword">extends</span> <span class="title">Colleague</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(Mediator mediator)</span> </span>&#123;</span><br><span class="line">        mediator.doEvent(<span class="string">"alarm"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doAlarm</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"doAlarm()"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CoffeePot</span> <span class="keyword">extends</span> <span class="title">Colleague</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(Mediator mediator)</span> </span>&#123;</span><br><span class="line">        mediator.doEvent(<span class="string">"coffeePot"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doCoffeePot</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"doCoffeePot()"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Calender</span> <span class="keyword">extends</span> <span class="title">Colleague</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(Mediator mediator)</span> </span>&#123;</span><br><span class="line">        mediator.doEvent(<span class="string">"calender"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doCalender</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"doCalender()"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sprinkler</span> <span class="keyword">extends</span> <span class="title">Colleague</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(Mediator mediator)</span> </span>&#123;</span><br><span class="line">        mediator.doEvent(<span class="string">"sprinkler"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSprinkler</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"doSprinkler()"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Mediator</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">doEvent</span><span class="params">(String eventType)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteMediator</span> <span class="keyword">extends</span> <span class="title">Mediator</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Alarm alarm;</span><br><span class="line">    <span class="keyword">private</span> CoffeePot coffeePot;</span><br><span class="line">    <span class="keyword">private</span> Calender calender;</span><br><span class="line">    <span class="keyword">private</span> Sprinkler sprinkler;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteMediator</span><span class="params">(Alarm alarm, CoffeePot coffeePot, Calender calender, Sprinkler sprinkler)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.alarm = alarm;</span><br><span class="line">        <span class="keyword">this</span>.coffeePot = coffeePot;</span><br><span class="line">        <span class="keyword">this</span>.calender = calender;</span><br><span class="line">        <span class="keyword">this</span>.sprinkler = sprinkler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doEvent</span><span class="params">(String eventType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (eventType) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"alarm"</span>:</span><br><span class="line">                doAlarmEvent();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"coffeePot"</span>:</span><br><span class="line">                doCoffeePotEvent();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"calender"</span>:</span><br><span class="line">                doCalenderEvent();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                doSprinklerEvent();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doAlarmEvent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        alarm.doAlarm();</span><br><span class="line">        coffeePot.doCoffeePot();</span><br><span class="line">        calender.doCalender();</span><br><span class="line">        sprinkler.doSprinkler();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doCoffeePotEvent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doCalenderEvent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSprinklerEvent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Alarm alarm = <span class="keyword">new</span> Alarm();</span><br><span class="line">        CoffeePot coffeePot = <span class="keyword">new</span> CoffeePot();</span><br><span class="line">        Calender calender = <span class="keyword">new</span> Calender();</span><br><span class="line">        Sprinkler sprinkler = <span class="keyword">new</span> Sprinkler();</span><br><span class="line">        Mediator mediator = <span class="keyword">new</span> ConcreteMediator(alarm, coffeePot, calender, sprinkler);</span><br><span class="line">        <span class="comment">// 闹钟事件到达，调用中介者就可以操作相关对象</span></span><br><span class="line">        alarm.onEvent(mediator);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">doAlarm()</span><br><span class="line">doCoffeePot()</span><br><span class="line">doCalender()</span><br><span class="line">doSprinkler()</span><br></pre></td></tr></table></figure>
 <h3 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h3><ul>
-<li>java.util.Comparator#compare()</li>
-<li>javax.servlet.http.HttpServlet</li>
-<li>javax.servlet.Filter#doFilter()</li>
+<li>All scheduleXXX() methods of <a href="http://docs.oracle.com/javase/8/docs/api/java/util/Timer.html" target="_blank" rel="noopener">java.util.Timer</a></li>
+<li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Executor.html#execute-java.lang.Runnable-" target="_blank" rel="noopener">java.util.concurrent.Executor#execute()</a></li>
+<li>submit() and invokeXXX() methods of <a href="http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html" target="_blank" rel="noopener">java.util.concurrent.ExecutorService</a></li>
+<li>scheduleXXX() methods of <a href="http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ScheduledExecutorService.html" target="_blank" rel="noopener">java.util.concurrent.ScheduledExecutorService</a></li>
+<li><a href="http://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html#invoke-java.lang.Object-java.lang.Object...-" target="_blank" rel="noopener">java.lang.reflect.Method#invoke()</a></li>
 </ul>
 
       
@@ -260,11 +473,11 @@
 
 
   
-    <article id="post-SpringBoot集成JRES-RPC" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-责任链模式" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/11/01/SpringBoot集成JRES-RPC/" class="article-date">
-  	<time datetime="2018-11-01T02:03:00.000Z" itemprop="datePublished">2018-11-01</time>
+      <a href="/2019/03/26/责任链模式/" class="article-date">
+  	<time datetime="2019-03-25T16:00:00.000Z" itemprop="datePublished">2019-03-26</time>
 </a>
     </div>
   
@@ -277,7 +490,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/01/SpringBoot集成JRES-RPC/">SpringBoot集成JRES-RPC 实现T2服务</a>
+      <a class="article-title" href="/2019/03/26/责任链模式/">责任链模式</a>
     </h1>
   
 
@@ -286,231 +499,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h4 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h4><ol>
-<li>需要使用Java对接第三方平台,提供给C程序调用</li>
-<li>保持项目架构简单、容易部署</li>
-</ol>
-<h4 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h4><ol>
-<li>新建一个SpringBoot项目</li>
-<li><p>参考<a href="http://rdc.hundsun.com/product/download/jresServer.htm" target="_blank" rel="noopener">JRES Server框架说明</a>，单独引入RPC组件，主要是引入以下依赖：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-api&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-spi-t2def&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-spi-spring4&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-common-core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在启动类中引入JRES-RPC的Bean配置并设置配置文件路径<br><a href="https://imgchr.com/i/iWrDl6" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/01/iWrDl6.md.png" alt="iWrDl6.md.png"></a></p>
-</li>
-<li>配置好server.properties和ares-app-config.xml文件，并放到resources目录下</li>
-<li>开发remoting接口，并使用HSAdmin工具测试 （可以咨询研发中心客服苏响）</li>
-</ol>
-<h4 id="遇到的一些问题"><a href="#遇到的一些问题" class="headerlink" title="遇到的一些问题"></a>遇到的一些问题</h4><ol>
-<li>引入SpringBoot的热部署工具spring-boot-devtools之后，参数为JavaBean的T2接口报argument type miss match。<br> 调试后发现，热部署工具使用RestartedClassLoader加载类，而T2接口的参数Bean是由其它的类加载器加载，所以虽然是同一个类型，但是Class对象不一致，反射调用method报错。<br> 移除spring-boot-devtools后成功解决。</li>
-<li>项目打成Jar包运行之后 发现T2Server没有启动，也没有报错。<br> 几经排查，对比Application类Main启动的方式下的日志,怀疑XML配置的JavaBean CepContextLoader没有加载，因此把配置文件从jresplus-rpc-spi-spring4中拿出来放到项目路径下，将其中的CepContextLoader改为@Bean加载。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="comment">//注释掉jresplus-cep-beans.xml里的CepContextLoader和SpringPluginFramework配置</span></span><br><span class="line"><span class="meta">@ImportResource</span>(&#123;<span class="string">"classpath:config/jresplus-cep-beans.xml"</span>,<span class="string">"classpath:config/remoting-main-beans.xml"</span>&#125;)</span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CopApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.setProperty(<span class="string">"JresConfigLocation"</span>,<span class="string">"classpath:server.properties"</span>);</span><br><span class="line">        SpringApplication.run(CopApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span>(<span class="string">"jres.framework"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> SpringPluginFramework <span class="title">springPluginFramework</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SpringPluginFramework();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function">CepContextLoader <span class="title">CepContextLoader</span><span class="params">(SpringPluginFramework springPluginFramework)</span></span>&#123;</span><br><span class="line">        CepContextLoader cepContextLoader = <span class="keyword">new</span> CepContextLoader();</span><br><span class="line">        cepContextLoader.setPropPath(<span class="string">"classpath*:ares-app-config.xml"</span>);</span><br><span class="line">        cepContextLoader.setFramework(springPluginFramework);</span><br><span class="line">        <span class="keyword">return</span>  cepContextLoader;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>重新打包后，测试可用。</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JAVA大纲" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/09/08/JAVA大纲/" class="article-date">
-  	<time datetime="2018-09-08T03:13:00.000Z" itemprop="datePublished">2018-09-08</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/08/JAVA大纲/">JAVA培训大纲</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h3><ul>
-<li>为什么要用java<ol>
-<li>平台无关性，方便跨平台部署</li>
-<li>面向对象(封装、继承、多态)</li>
-<li>强大的原生库 (屏蔽底层细节)  </li>
-<li>丰富的第三方库</li>
-<li>各种成熟的解决方案</li>
-<li>…</li>
-</ol>
-</li>
-<li>开发准备<ol>
-<li>JDK (源码、工具、JRE)</li>
-<li>Maven (管理第三方依赖，编译打包等)</li>
-<li>IDE (辅助编码、调试运行等)</li>
-<li>Web容器(tomcat/jetty等)    </li>
-</ol>
-</li>
-<li>要学哪些东西 (了解、会用、理解)<ol>
-<li>语法 (enum、注解)</li>
-<li>编码规范<ol>
-<li>命名</li>
-<li>日志</li>
-<li>异常处理</li>
-<li>注释</li>
-</ol>
-</li>
-<li>常用的原生类(java.lang、java.util)</li>
-<li>常用的框架<ol>
-<li>Spring&amp;SpringMVC</li>
-<li>MyBatis</li>
-</ol>
-</li>
-</ol>
-</li>
+        <h2 id="责任链（Chain-Of-Responsibility）"><a href="#责任链（Chain-Of-Responsibility）" class="headerlink" title="责任链（Chain Of Responsibility）"></a>责任链（Chain Of Responsibility）</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>顾名思义，责任链模式（Chain of Responsibility Pattern）为请求创建了一个接收者对象的链。这种模式给予请求的类型，对请求的发送者和接收者进行解耦。这种类型的设计模式属于行为型模式。</p>
+<p>在这种模式中，通常每个接收者都包含对另一个接收者的引用。如果一个对象不能处理该请求，那么它会把相同的请求传给下一个接收者，依此类推。</p>
+<h3 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h3><p>使多个对象都有机会处理请求，从而避免请求的发送者和接收者之间的耦合关系。将这些对象连成一条链，并沿着这条链发送该请求，直到有一个对象处理它为止。</p>
+<h3 id="Class-Diagram"><a href="#Class-Diagram" class="headerlink" title="Class Diagram"></a>Class Diagram</h3><ul>
+<li>Handler：定义处理请求的接口，并且实现后继链（successor）</li>
 </ul>
-<h3 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h3><ul>
-<li>并发编程</li>
-<li>抽象建模(服务、接口设计等)</li>
-<li>自顶向下、逐层分解</li>
-<li>JVM内存模型</li>
-<li>常见问题排查</li>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/ca9f23bf-55a4-47b2-9534-a28e35397988.png"> </div><br></p>
+<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> Handler successor;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Handler</span><span class="params">(Handler successor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.successor = successor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(Request request)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler1</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteHandler1</span><span class="params">(Handler successor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(successor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (request.getType() == RequestType.TYPE1) &#123;</span><br><span class="line">            System.out.println(request.getName() + <span class="string">" is handle by ConcreteHandler1"</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (successor != <span class="keyword">null</span>) &#123;</span><br><span class="line">            successor.handleRequest(request);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler2</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteHandler2</span><span class="params">(Handler successor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(successor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (request.getType() == RequestType.TYPE2) &#123;</span><br><span class="line">            System.out.println(request.getName() + <span class="string">" is handle by ConcreteHandler2"</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (successor != <span class="keyword">null</span>) &#123;</span><br><span class="line">            successor.handleRequest(request);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Request</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> RequestType type;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Request</span><span class="params">(RequestType type, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.type = type;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RequestType <span class="title">getType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> type;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> RequestType &#123;</span><br><span class="line">    TYPE1, TYPE2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Handler handler1 = <span class="keyword">new</span> ConcreteHandler1(<span class="keyword">null</span>);</span><br><span class="line">        Handler handler2 = <span class="keyword">new</span> ConcreteHandler2(handler1);</span><br><span class="line"></span><br><span class="line">        Request request1 = <span class="keyword">new</span> Request(RequestType.TYPE1, <span class="string">"request1"</span>);</span><br><span class="line">        handler2.handleRequest(request1);</span><br><span class="line"></span><br><span class="line">        Request request2 = <span class="keyword">new</span> Request(RequestType.TYPE2, <span class="string">"request2"</span>);</span><br><span class="line">        handler2.handleRequest(request2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">request1 is handle by ConcreteHandler1</span><br><span class="line">request2 is handle by ConcreteHandler2</span><br></pre></td></tr></table></figure>
+<h3 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h3><ul>
+<li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/logging/Logger.html#log%28java.util.logging.Level,%20java.lang.String%29" target="_blank" rel="noopener">java.util.logging.Logger#log()</a></li>
+<li><a href="https://commons.apache.org/proper/commons-chain/index.html" target="_blank" rel="noopener">Apache Commons Chain</a></li>
+<li><a href="http://docs.oracle.com/javaee/7/api/javax/servlet/Filter.html#doFilter-javax.servlet.ServletRequest-javax.servlet.ServletResponse-javax.servlet.FilterChain-" target="_blank" rel="noopener">javax.servlet.Filter#doFilter()</a></li>
 </ul>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-踩坑记5-Mybatis合集" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/05/19/踩坑记5-Mybatis合集/" class="article-date">
-  	<time datetime="2018-05-19T08:20:00.000Z" itemprop="datePublished">2018-05-19</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/19/踩坑记5-Mybatis合集/">踩坑记5-Mybatis合集</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>从刚参加工作开始就接触了Mybatis，但是大部分时候只是照猫画虎，一直没有系统的学习过，遇到些问题就很容易卡住，搜不到解决方法，只能参照错误逐行排查来定位问题，效率十分低下。<br>反思之后，决定从头学习一下，顺便整理下踩过的坑，分析下原因。<br><a href="http://www.mybatis.org/mybatis-3/index.html#" target="_blank" rel="noopener">官网链接</a></p>
-<h3 id="MyBatis是什么"><a href="#MyBatis是什么" class="headerlink" title="MyBatis是什么"></a>MyBatis是什么</h3><p>它是一款持久层框架，支持自定义SQL、存储过程和结果集映射。通过XML或者注解来实现ORM映射。</p>
-<h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><pre><code>&lt;dependency&gt;
-  &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
-  &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
-  &lt;version&gt;x.x.x&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre><p> 与Spring框架的集成</p>
-<pre><code>&lt;dependency&gt;
-    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
-    &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
-    &lt;version&gt;x.x.x&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre><h3 id="框架配置"><a href="#框架配置" class="headerlink" title="框架配置"></a>框架配置</h3><pre><code>1. 数据源(必须)、SqlSessionFactory
-2. Settings 缓存、代理、作用域等
-3. typeAliases POJO别名
-4. typeHandlers 可以自定义类型映射，比如Enum映射为Name or Order
-5. environments 
-    - 不同环境不同设置(开发、测试、生产等)
-    - 多数据源对应多个SqlSessionFactory
-6. 插件 实现Interceptor接口，拦截下列方法
-    Executor (update, query, flushStatements, commit, rollback, getTransaction, close, isClosed)
-    ParameterHandler (getParameterObject, setParameters)
-    ResultSetHandler (handleResultSets, handleOutputParameters)
-    StatementHandler (prepare, parameterize, batch, update, query)
-7.  Mappers XML映射文件
-</code></pre><h3 id="Mapper语法"><a href="#Mapper语法" class="headerlink" title="Mapper语法"></a>Mapper语法</h3><ul>
-<li>cache – 给定命名空间的缓存配置。</li>
-<li>cache-ref – 其他命名空间缓存配置的引用。</li>
-<li>resultMap – 是最复杂也是最强大的元素，用来描述如何从数据库结果集中来加载对象。<ul>
-<li>自动映射以及驼峰映射mapUnderscoreToCamelCase=true\</li>
-<li>集合嵌套association、collection等</li>
-<li>鉴别器discriminator case判断</li>
-</ul>
-</li>
-<li>sql – 可被其他语句引用的可重用语句块。</li>
-<li>insert – 映射插入语句</li>
-<li>update – 映射更新语句</li>
-<li>delete – 映射删除语句</li>
-<li>select – 映射查询语句<br>PS： 缓存使用的时候可以参考<a href="https://tech.meituan.com/mybatis_cache.html" target="_blank" rel="noopener">聊聊MyBatis缓存机制</a><br>不过建议使用Spring+Redis实现，更靠谱一些</li>
-</ul>
-<h3 id="动态-SQL"><a href="#动态-SQL" class="headerlink" title="动态 SQL"></a>动态 SQL</h3><ul>
-<li>if</li>
-<li>choose/when/otherwise</li>
-<li>bind</li>
-<li>trim, where, set</li>
-<li>foreach</li>
-</ul>
-<h3 id="JAVA-API"><a href="#JAVA-API" class="headerlink" title="JAVA API"></a>JAVA API</h3><ul>
-<li>注解</li>
-<li>SqlSession</li>
-<li>SqlBuilder</li>
-</ul>
-<h3 id="问题集合"><a href="#问题集合" class="headerlink" title="问题集合"></a>问题集合</h3><ol>
-<li>insert操作报 无效的列：111<ul>
-<li>原因: 插入空值到非空字段</li>
-</ul>
-</li>
-</ol>
 
       
     </div>
@@ -519,101 +526,12 @@
       
       
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mybatis/">Mybatis</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Design-Pattern/">Design Pattern</a></li></ul>
 	</div>
 
       
 	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/troubleshooting/">troubleshooting</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Java根据模板生成PDF文件" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/05/19/Java根据模板生成PDF文件/" class="article-date">
-  	<time datetime="2018-05-19T03:29:00.000Z" itemprop="datePublished">2018-05-19</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/19/Java根据模板生成PDF文件/">Java根据模板生成PDF文件</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="需求场景"><a href="#需求场景" class="headerlink" title="需求场景"></a>需求场景</h3><pre><code>根据业务自定义模板，按照模板导出相应格式数据，包括文字、图片等
-</code></pre><h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><pre><code>1. Adobe Acrobаt编辑PDF模板
-2. itextpdf5 填入业务参数
-</code></pre><h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><pre><code>&lt;dependency&gt;
-    &lt;groupId&gt;com.itextpdf&lt;/groupId&gt;
-    &lt;artifactId&gt;itextpdf&lt;/artifactId&gt;
-    &lt;version&gt;5.5.13&lt;/version&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;com.itextpdf&lt;/groupId&gt;
-    &lt;artifactId&gt;itext-asian&lt;/artifactId&gt;
-    &lt;version&gt;5.2.0&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre><h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://developers.itextpdf.com/examples-itext5" target="_blank" rel="noopener">官网例子</a></p>
-<h3 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h3><h4 id="制作PDF模板"><a href="#制作PDF模板" class="headerlink" title="制作PDF模板"></a>制作PDF模板</h4><p>这个过程，没啥技术含量，只讲下经验：</p>
-<ol>
-<li>先用Word编辑模板，然后导出成PDF，比直接编辑PDF方便</li>
-<li>Acrobаt打开PDF，准备表单，需要注意<ul>
-<li>字体一定要选带中文的，比如宋体、雅黑等</li>
-<li>属性一定选可见</li>
-<li>表单域名 一定要和业务参数名对应</li>
-</ul>
-</li>
-</ol>
-<h4 id="根据模板生成文件"><a href="#根据模板生成文件" class="headerlink" title="根据模板生成文件"></a>根据模板生成文件</h4><p>用了PdfReader、PdfStamper和AcroFields，实现文本域和图像域内容的写入。<br>params参数集的key必须与表单域名一一对应，其他的直接看代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"><span class="keyword">import</span> java.io.FileOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.itextpdf.text.DocumentException;</span><br><span class="line"><span class="keyword">import</span> com.itextpdf.text.Image;</span><br><span class="line"><span class="keyword">import</span> com.itextpdf.text.pdf.AcroFields;</span><br><span class="line"><span class="keyword">import</span> com.itextpdf.text.pdf.PdfReader;</span><br><span class="line"><span class="keyword">import</span> com.itextpdf.text.pdf.PdfStamper;</span><br><span class="line"><span class="keyword">import</span> com.itextpdf.text.pdf.PushbuttonField;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PdfUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> src PDF模板路径</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> dest 生成文件路径</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> params 参数集。若为图片，key中需包含image，value为图片地址</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> DocumentException</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">generatePDF</span><span class="params">(String src, String dest, Map&lt;String,String&gt; params)</span> <span class="keyword">throws</span> DocumentException, IOException </span>&#123;</span><br><span class="line"></span><br><span class="line">        File file = <span class="keyword">new</span> File(dest);</span><br><span class="line">        file.getParentFile().mkdirs();</span><br><span class="line">        PdfReader reader =<span class="keyword">null</span>;</span><br><span class="line">        PdfStamper stamper = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            reader= <span class="keyword">new</span> PdfReader(src);</span><br><span class="line">            stamper = <span class="keyword">new</span> PdfStamper(reader, <span class="keyword">new</span> FileOutputStream(dest));</span><br><span class="line">            AcroFields form = stamper.getAcroFields();</span><br><span class="line">            <span class="keyword">for</span> (String key :form.getFields().keySet())&#123;</span><br><span class="line">                <span class="keyword">if</span> (params.get(key)!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                    <span class="comment">//根据表单域名区分类型</span></span><br><span class="line">                    <span class="keyword">if</span> (!key.startsWith(<span class="string">"Image"</span>))&#123;</span><br><span class="line">                        <span class="comment">//设置文本域参数值</span></span><br><span class="line">                        form.setField(key,params.get(key));</span><br><span class="line">                    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                        <span class="comment">//将图片写入指定的field</span></span><br><span class="line">                        Image image = Image.getInstance(params.get(key));</span><br><span class="line">                        PushbuttonField pb = form.getNewPushbuttonFromField(key);</span><br><span class="line">                        pb.setImage(image);</span><br><span class="line">                        form.replacePushbuttonField(key, pb.getField());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            stamper.setFormFlattening(<span class="keyword">true</span>);</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (stamper!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                    stamper.close();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (reader!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                    reader.close();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h3><ol>
-<li>IText类库的功能非常强大，支持各种控件的操作，包括表单、表格、字体、图片等，还具有文件合并、转格式、加密、签名等功能。<br>可惜的是中文的资料不多，如果需要深入使用，建议直接去官网上看API文档和Examples示例。</li>
-<li>另外，由于是国外的产品，对中文的处理有一些坑在官网上并未提及，需要想办法解决，比如前面依赖的itext-asian包和模板编辑时字体的选择 就属此类。</li>
-</ol>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/itext5/">itext5</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/blog/">blog</a>
+	<a class="article-category-link" href="/categories/文摘/">文摘</a>
 	</div>
 
 
@@ -636,7 +554,7 @@
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
     </nav>
   
 </div>

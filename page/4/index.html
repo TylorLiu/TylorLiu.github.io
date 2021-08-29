@@ -177,11 +177,11 @@
 
       <div class="body-wrap">
   
-    <article id="post-归档历史表后Mysql重启自增主键重置问题" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-观察者模式" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/05/19/归档历史表后Mysql重启自增主键重置问题/" class="article-date">
-  	<time datetime="2018-05-19T03:29:00.000Z" itemprop="datePublished">2018-05-19</time>
+      <a href="/2019/03/26/观察者模式/" class="article-date">
+  	<time datetime="2019-03-25T16:00:00.000Z" itemprop="datePublished">2019-03-26</time>
 </a>
     </div>
   
@@ -194,7 +194,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/19/归档历史表后Mysql重启自增主键重置问题/">归档历史表后Mysql重启自增主键重置问题</a>
+      <a class="article-title" href="/2019/03/26/观察者模式/">观察者模式</a>
     </h1>
   
 
@@ -203,16 +203,28 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="问题场景"><a href="#问题场景" class="headerlink" title="问题场景"></a>问题场景</h3><pre><code>COP日初始化时，会将当前表数据归档到历史表，然后把数据从当前表删除。
-由于MySql InnoDB数据库自增列auto_increment的最大值保存在内存中，启动后auto_increment会重置为当前表的最大值+1。
-如果此时重启数据库，由于当前表无数据，重启后当前表新增的数据主键就变为1。
-再次日初始化时，由于历史表中已存在主键为1的数据，就会主键冲突。
-</code></pre><h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><pre><code>1. 升级Mysql到8.0.0版本 (参考官网bug issue，未验证) 
-2. 为当前表添加触发器，插入数据时，取当前表和历史表中较大的auto_increment作为当前表的auto_increment。
-    以COP为例，当前表为cop_tliquidateins，历史表为cop_thisliquidateins，主键为liquidate_ins_id，按以下方式创建触发器：
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">delimiter $$</span><br><span class="line">drop trigger if exists trig_autoinc_liquidateins;</span><br><span class="line">CREATE TRIGGER trig_autoinc_liquidateins BEFORE INSERT ON cop_tliquidateins</span><br><span class="line">FOR EACH ROW</span><br><span class="line">BEGIN</span><br><span class="line">  declare auto_incr1 BIGINT;</span><br><span class="line">  declare auto_incr2 BIGINT;</span><br><span class="line">  IF (NEW.liquidate_ins_id=0) THEN</span><br><span class="line">    SELECT AUTO_INCREMENT INTO auto_incr1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = SCHEMA() and UPPER(TABLE_NAME) = UPPER(&apos;cop_tliquidateins&apos;);</span><br><span class="line">SELECT AUTO_INCREMENT INTO auto_incr2 FROM information_schema.TABLES WHERE TABLE_SCHEMA = SCHEMA() and UPPER(TABLE_NAME) = UPPER(&apos;cop_thisliquidateins&apos;);</span><br><span class="line">    IF (auto_incr2 &gt; auto_incr1) THEN</span><br><span class="line">      SET NEW.liquidate_ins_id = last_insert_id(auto_incr2);</span><br><span class="line">    END IF;</span><br><span class="line">  END IF;</span><br><span class="line">END;</span><br><span class="line">delimiter ;</span><br></pre></td></tr></table></figure>
-<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://bugs.mysql.com/bug.php?id=199" target="_blank" rel="noopener">Mysql bugs</a></p>
-<p><a href="https://www.slicewise.net/index.php?id=82" target="_blank" rel="noopener">触发器方案</a></p>
+        <h2 id="观察者（Observer）"><a href="#观察者（Observer）" class="headerlink" title="观察者（Observer）"></a>观察者（Observer）</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>当对象间存在一对多关系时，则使用观察者模式（Observer Pattern）。比如，当一个对象被修改时，则会自动通知依赖它的对象。观察者模式属于行为型模式。</p>
+<h3 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h3><p>定义对象之间的一对多依赖，当一个对象状态改变时，它的所有依赖都会收到通知并且自动更新状态。</p>
+<p>主题（Subject）是被观察的对象，而其所有依赖者（Observer）称为观察者。</p>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/7a3c6a30-c735-4edb-8115-337288a4f0f2.jpg" width="600"> </div><br></p>
+<h3 id="Class-Diagram"><a href="#Class-Diagram" class="headerlink" title="Class Diagram"></a>Class Diagram</h3><p>主题（Subject）具有注册和移除观察者、并通知所有观察者的功能，主题是通过维护一张观察者列表来实现这些操作的。</p>
+<p>观察者（Observer）的注册功能需要调用主题的 registerObserver() 方法。</p>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/a8c8f894-a712-447c-9906-5caef6a016e3.png"> </div><br></p>
+<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><p>天气数据布告板会在天气信息发生改变时更新其内容，布告板有多个，并且在将来会继续增加。</p>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/b1df9732-86ce-4d69-9f06-fba1db7b3b5a.jpg"> </div><br></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">registerObserver</span><span class="params">(Observer o)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">removeObserver</span><span class="params">(Observer o)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">notifyObserver</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WeatherData</span> <span class="keyword">implements</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Observer&gt; observers;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> temperature;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> humidity;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> pressure;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WeatherData</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        observers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMeasurements</span><span class="params">(<span class="keyword">float</span> temperature, <span class="keyword">float</span> humidity, <span class="keyword">float</span> pressure)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.temperature = temperature;</span><br><span class="line">        <span class="keyword">this</span>.humidity = humidity;</span><br><span class="line">        <span class="keyword">this</span>.pressure = pressure;</span><br><span class="line">        notifyObserver();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerObserver</span><span class="params">(Observer o)</span> </span>&#123;</span><br><span class="line">        observers.add(o);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeObserver</span><span class="params">(Observer o)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i = observers.indexOf(o);</span><br><span class="line">        <span class="keyword">if</span> (i &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            observers.remove(i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">notifyObserver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (Observer o : observers) &#123;</span><br><span class="line">            o.update(temperature, humidity, pressure);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">float</span> temp, <span class="keyword">float</span> humidity, <span class="keyword">float</span> pressure)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StatisticsDisplay</span> <span class="keyword">implements</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">StatisticsDisplay</span><span class="params">(Subject weatherData)</span> </span>&#123;</span><br><span class="line">        weatherData.reisterObserver(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">float</span> temp, <span class="keyword">float</span> humidity, <span class="keyword">float</span> pressure)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"StatisticsDisplay.update: "</span> + temp + <span class="string">" "</span> + humidity + <span class="string">" "</span> + pressure);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CurrentConditionsDisplay</span> <span class="keyword">implements</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CurrentConditionsDisplay</span><span class="params">(Subject weatherData)</span> </span>&#123;</span><br><span class="line">        weatherData.registerObserver(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">float</span> temp, <span class="keyword">float</span> humidity, <span class="keyword">float</span> pressure)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"CurrentConditionsDisplay.update: "</span> + temp + <span class="string">" "</span> + humidity + <span class="string">" "</span> + pressure);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WeatherStation</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        WeatherData weatherData = <span class="keyword">new</span> WeatherData();</span><br><span class="line">        CurrentConditionsDisplay currentConditionsDisplay = <span class="keyword">new</span> CurrentConditionsDisplay(weatherData);</span><br><span class="line">        StatisticsDisplay statisticsDisplay = <span class="keyword">new</span> StatisticsDisplay(weatherData);</span><br><span class="line"></span><br><span class="line">        weatherData.setMeasurements(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        weatherData.setMeasurements(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CurrentConditionsDisplay.update: 0.0 0.0 0.0</span><br><span class="line">StatisticsDisplay.update: 0.0 0.0 0.0</span><br><span class="line">CurrentConditionsDisplay.update: 1.0 1.0 1.0</span><br><span class="line">StatisticsDisplay.update: 1.0 1.0 1.0</span><br></pre></td></tr></table></figure>
+<h3 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h3><ul>
+<li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/Observer.html" target="_blank" rel="noopener">java.util.Observer</a></li>
+<li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/EventListener.html" target="_blank" rel="noopener">java.util.EventListener</a></li>
+<li><a href="http://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpSessionBindingListener.html" target="_blank" rel="noopener">javax.servlet.http.HttpSessionBindingListener</a></li>
+<li><a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="noopener">RxJava</a></li>
+</ul>
 
       
     </div>
@@ -221,12 +233,12 @@
       
       
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mysql/">Mysql</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Design-Pattern/">Design Pattern</a></li></ul>
 	</div>
 
       
 	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/blog/">blog</a>
+	<a class="article-category-link" href="/categories/文摘/">文摘</a>
 	</div>
 
 
@@ -247,11 +259,11 @@
 
 
   
-    <article id="post-数据库性能优化思路总结" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-策略模式" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/03/26/数据库性能优化思路总结/" class="article-date">
-  	<time datetime="2018-03-26T11:59:00.000Z" itemprop="datePublished">2018-03-26</time>
+      <a href="/2019/03/26/策略模式/" class="article-date">
+  	<time datetime="2019-03-25T16:00:00.000Z" itemprop="datePublished">2019-03-26</time>
 </a>
     </div>
   
@@ -264,7 +276,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/26/数据库性能优化思路总结/">数据库性能优化思路总结</a>
+      <a class="article-title" href="/2019/03/26/策略模式/">策略模式</a>
     </h1>
   
 
@@ -273,42 +285,311 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <ol>
-<li>性能需求——&gt;数据库设计<ul>
-<li>规范：<ul>
-<li>无重复 或多值的列</li>
-<li>非关键字全部依赖PK</li>
-<li>非关键字不互相依赖</li>
+        <h2 id="策略（Strategy）"><a href="#策略（Strategy）" class="headerlink" title="策略（Strategy）"></a>策略（Strategy）</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>在策略模式（Strategy Pattern）中，一个类的行为或其算法可以在运行时更改。这种类型的设计模式属于行为型模式。</p>
+<p>在策略模式中，我们创建表示各种策略的对象和一个行为随着策略对象改变而改变的 context 对象。策略对象改变 context 对象的执行算法。</p>
+<h3 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h3><p>定义一系列算法，封装每个算法，并使它们可以互换。</p>
+<p>策略模式可以让算法独立于使用它的客户端。</p>
+<h3 id="Class-Diagram"><a href="#Class-Diagram" class="headerlink" title="Class Diagram"></a>Class Diagram</h3><ul>
+<li>Strategy 接口定义了一个算法族，它们都实现了  behavior() 方法。</li>
+<li>Context 是使用到该算法族的类，其中的 doSomething() 方法会调用 behavior()，setStrategy(Strategy) 方法可以动态地改变 strategy 对象，也就是说能动态地改变 Context 所使用的算法。</li>
+</ul>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/cd1be8c2-755a-4a66-ad92-2e30f8f47922.png"> </div><br></p>
+<h3 id="与状态模式的比较"><a href="#与状态模式的比较" class="headerlink" title="与状态模式的比较"></a>与状态模式的比较</h3><p>状态模式的类图和策略模式类似，并且都是能够动态改变对象的行为。但是状态模式是通过状态转移来改变 Context 所组合的 State 对象，而策略模式是通过 Context 本身的决策来改变组合的 Strategy 对象。所谓的状态转移，是指 Context 在运行过程中由于一些条件发生改变而使得 State 对象发生改变，注意必须要是在运行过程中。</p>
+<p>状态模式主要是用来解决状态转移的问题，当状态发生转移了，那么 Context 对象就会改变它的行为；而策略模式主要是用来封装一组可以互相替代的算法族，并且可以根据需要动态地去替换 Context 使用的算法。</p>
+<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><p>设计一个鸭子，它可以动态地改变叫声。这里的算法族是鸭子的叫声行为。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">QuackBehavior</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">quack</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Quack</span> <span class="keyword">implements</span> <span class="title">QuackBehavior</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">quack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"quack!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Squeak</span> <span class="keyword">implements</span> <span class="title">QuackBehavior</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">quack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"squeak!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Duck</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> QuackBehavior quackBehavior;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">performQuack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (quackBehavior != <span class="keyword">null</span>) &#123;</span><br><span class="line">            quackBehavior.quack();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setQuackBehavior</span><span class="params">(QuackBehavior quackBehavior)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.quackBehavior = quackBehavior;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Duck duck = <span class="keyword">new</span> Duck();</span><br><span class="line">        duck.setQuackBehavior(<span class="keyword">new</span> Squeak());</span><br><span class="line">        duck.performQuack();</span><br><span class="line">        duck.setQuackBehavior(<span class="keyword">new</span> Quack());</span><br><span class="line">        duck.performQuack();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">squeak!</span><br><span class="line">quack!</span><br></pre></td></tr></table></figure>
+<h3 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h3><ul>
+<li>java.util.Comparator#compare()</li>
+<li>javax.servlet.http.HttpServlet</li>
+<li>javax.servlet.Filter#doFilter()</li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Design-Pattern/">Design Pattern</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/文摘/">文摘</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-SpringBoot集成JRES-RPC" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/11/01/SpringBoot集成JRES-RPC/" class="article-date">
+  	<time datetime="2018-11-01T02:03:00.000Z" itemprop="datePublished">2018-11-01</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/01/SpringBoot集成JRES-RPC/">SpringBoot集成JRES-RPC 实现T2服务</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h4><ol>
+<li>需要使用Java对接第三方平台,提供给C程序调用</li>
+<li>保持项目架构简单、容易部署</li>
+</ol>
+<h4 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h4><ol>
+<li>新建一个SpringBoot项目</li>
+<li><p>参考<a href="http://rdc.hundsun.com/product/download/jresServer.htm" target="_blank" rel="noopener">JRES Server框架说明</a>，单独引入RPC组件，主要是引入以下依赖：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-api&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-spi-t2def&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-spi-spring4&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-common-core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在启动类中引入JRES-RPC的Bean配置并设置配置文件路径<br><a href="https://imgchr.com/i/iWrDl6" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/01/iWrDl6.md.png" alt="iWrDl6.md.png"></a></p>
+</li>
+<li>配置好server.properties和ares-app-config.xml文件，并放到resources目录下</li>
+<li>开发remoting接口，并使用HSAdmin工具测试 （可以咨询研发中心客服苏响）</li>
+</ol>
+<h4 id="遇到的一些问题"><a href="#遇到的一些问题" class="headerlink" title="遇到的一些问题"></a>遇到的一些问题</h4><ol>
+<li>引入SpringBoot的热部署工具spring-boot-devtools之后，参数为JavaBean的T2接口报argument type miss match。<br> 调试后发现，热部署工具使用RestartedClassLoader加载类，而T2接口的参数Bean是由其它的类加载器加载，所以虽然是同一个类型，但是Class对象不一致，反射调用method报错。<br> 移除spring-boot-devtools后成功解决。</li>
+<li>项目打成Jar包运行之后 发现T2Server没有启动，也没有报错。<br> 几经排查，对比Application类Main启动的方式下的日志,怀疑XML配置的JavaBean CepContextLoader没有加载，因此把配置文件从jresplus-rpc-spi-spring4中拿出来放到项目路径下，将其中的CepContextLoader改为@Bean加载。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="comment">//注释掉jresplus-cep-beans.xml里的CepContextLoader和SpringPluginFramework配置</span></span><br><span class="line"><span class="meta">@ImportResource</span>(&#123;<span class="string">"classpath:config/jresplus-cep-beans.xml"</span>,<span class="string">"classpath:config/remoting-main-beans.xml"</span>&#125;)</span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CopApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.setProperty(<span class="string">"JresConfigLocation"</span>,<span class="string">"classpath:server.properties"</span>);</span><br><span class="line">        SpringApplication.run(CopApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span>(<span class="string">"jres.framework"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> SpringPluginFramework <span class="title">springPluginFramework</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SpringPluginFramework();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function">CepContextLoader <span class="title">CepContextLoader</span><span class="params">(SpringPluginFramework springPluginFramework)</span></span>&#123;</span><br><span class="line">        CepContextLoader cepContextLoader = <span class="keyword">new</span> CepContextLoader();</span><br><span class="line">        cepContextLoader.setPropPath(<span class="string">"classpath*:ares-app-config.xml"</span>);</span><br><span class="line">        cepContextLoader.setFramework(springPluginFramework);</span><br><span class="line">        <span class="keyword">return</span>  cepContextLoader;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>重新打包后，测试可用。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-JAVA大纲" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/09/08/JAVA大纲/" class="article-date">
+  	<time datetime="2018-09-08T03:13:00.000Z" itemprop="datePublished">2018-09-08</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/08/JAVA大纲/">JAVA培训大纲</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h3><ul>
+<li>为什么要用java<ol>
+<li>平台无关性，方便跨平台部署</li>
+<li>面向对象(封装、继承、多态)</li>
+<li>强大的原生库 (屏蔽底层细节)  </li>
+<li>丰富的第三方库</li>
+<li>各种成熟的解决方案</li>
+<li>…</li>
+</ol>
+</li>
+<li>开发准备<ol>
+<li>JDK (源码、工具、JRE)</li>
+<li>Maven (管理第三方依赖，编译打包等)</li>
+<li>IDE (辅助编码、调试运行等)</li>
+<li>Web容器(tomcat/jetty等)    </li>
+</ol>
+</li>
+<li>要学哪些东西 (了解、会用、理解)<ol>
+<li>语法 (enum、注解)</li>
+<li>编码规范<ol>
+<li>命名</li>
+<li>日志</li>
+<li>异常处理</li>
+<li>注释</li>
+</ol>
+</li>
+<li>常用的原生类(java.lang、java.util)</li>
+<li>常用的框架<ol>
+<li>Spring&amp;SpringMVC</li>
+<li>MyBatis</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h3><ul>
+<li>并发编程</li>
+<li>抽象建模(服务、接口设计等)</li>
+<li>自顶向下、逐层分解</li>
+<li>JVM内存模型</li>
+<li>常见问题排查</li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-踩坑记5-Mybatis合集" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/05/19/踩坑记5-Mybatis合集/" class="article-date">
+  	<time datetime="2018-05-19T08:20:00.000Z" itemprop="datePublished">2018-05-19</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/19/踩坑记5-Mybatis合集/">踩坑记5-Mybatis合集</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>从刚参加工作开始就接触了Mybatis，但是大部分时候只是照猫画虎，一直没有系统的学习过，遇到些问题就很容易卡住，搜不到解决方法，只能参照错误逐行排查来定位问题，效率十分低下。<br>反思之后，决定从头学习一下，顺便整理下踩过的坑，分析下原因。<br><a href="http://www.mybatis.org/mybatis-3/index.html#" target="_blank" rel="noopener">官网链接</a></p>
+<h3 id="MyBatis是什么"><a href="#MyBatis是什么" class="headerlink" title="MyBatis是什么"></a>MyBatis是什么</h3><p>它是一款持久层框架，支持自定义SQL、存储过程和结果集映射。通过XML或者注解来实现ORM映射。</p>
+<h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+  &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+  &lt;version&gt;x.x.x&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><p> 与Spring框架的集成</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+    &lt;version&gt;x.x.x&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><h3 id="框架配置"><a href="#框架配置" class="headerlink" title="框架配置"></a>框架配置</h3><pre><code>1. 数据源(必须)、SqlSessionFactory
+2. Settings 缓存、代理、作用域等
+3. typeAliases POJO别名
+4. typeHandlers 可以自定义类型映射，比如Enum映射为Name or Order
+5. environments 
+    - 不同环境不同设置(开发、测试、生产等)
+    - 多数据源对应多个SqlSessionFactory
+6. 插件 实现Interceptor接口，拦截下列方法
+    Executor (update, query, flushStatements, commit, rollback, getTransaction, close, isClosed)
+    ParameterHandler (getParameterObject, setParameters)
+    ResultSetHandler (handleResultSets, handleOutputParameters)
+    StatementHandler (prepare, parameterize, batch, update, query)
+7.  Mappers XML映射文件
+</code></pre><h3 id="Mapper语法"><a href="#Mapper语法" class="headerlink" title="Mapper语法"></a>Mapper语法</h3><ul>
+<li>cache – 给定命名空间的缓存配置。</li>
+<li>cache-ref – 其他命名空间缓存配置的引用。</li>
+<li>resultMap – 是最复杂也是最强大的元素，用来描述如何从数据库结果集中来加载对象。<ul>
+<li>自动映射以及驼峰映射mapUnderscoreToCamelCase=true\</li>
+<li>集合嵌套association、collection等</li>
+<li>鉴别器discriminator case判断</li>
 </ul>
 </li>
-<li>合理冗余<ul>
-<li>主从/读写分离，分散压力</li>
-<li>表 </li>
-<li>字段 ，减少连接查询</li>
+<li>sql – 可被其他语句引用的可重用语句块。</li>
+<li>insert – 映射插入语句</li>
+<li>update – 映射更新语句</li>
+<li>delete – 映射删除语句</li>
+<li>select – 映射查询语句<br>PS： 缓存使用的时候可以参考<a href="https://tech.meituan.com/mybatis_cache.html" target="_blank" rel="noopener">聊聊MyBatis缓存机制</a><br>不过建议使用Spring+Redis实现，更靠谱一些</li>
 </ul>
-</li>
-<li>主键、外键、索引设计</li>
-<li>字段设计(类型、长度)</li>
-<li>系统设计</li>
+<h3 id="动态-SQL"><a href="#动态-SQL" class="headerlink" title="动态 SQL"></a>动态 SQL</h3><ul>
+<li>if</li>
+<li>choose/when/otherwise</li>
+<li>bind</li>
+<li>trim, where, set</li>
+<li>foreach</li>
 </ul>
-</li>
-<li>编码——&gt;SQL优化、事务&amp;锁<ul>
-<li>JOIN使用</li>
-<li>少用*，多指定具体字段</li>
+<h3 id="JAVA-API"><a href="#JAVA-API" class="headerlink" title="JAVA API"></a>JAVA API</h3><ul>
+<li>注解</li>
+<li>SqlSession</li>
+<li>SqlBuilder</li>
 </ul>
-</li>
-<li>数据库分割(中间件-mycat)<ul>
-<li>分区：在多个硬盘上存储(IO速度、存储量)</li>
-<li>分表<ul>
-<li>按时间分表，历史数据归档</li>
-<li>分表策略-&gt;Hash分表（myBatis）</li>
-</ul>
-</li>
-<li>分库<ul>
-<li>读写分离</li>
-<li>业务分库</li>
-</ul>
-</li>
+<h3 id="问题集合"><a href="#问题集合" class="headerlink" title="问题集合"></a>问题集合</h3><ol>
+<li>insert操作报 无效的列：111<ul>
+<li>原因: 插入空值到非空字段</li>
 </ul>
 </li>
 </ol>
@@ -319,125 +600,8 @@
     <div class="article-info article-info-index">
       
       
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/Blog/">Blog</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-添加jar包到本地Maven仓库" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/24/添加jar包到本地Maven仓库/" class="article-date">
-  	<time datetime="2018-03-24T02:29:00.000Z" itemprop="datePublished">2018-03-24</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/24/添加jar包到本地Maven仓库/">添加jar包到本地Maven仓库</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="添加jar包到本地Maven仓库"><a href="#添加jar包到本地Maven仓库" class="headerlink" title="添加jar包到本地Maven仓库"></a>添加jar包到本地Maven仓库</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn install:install-file -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.197 -Dpackaging=jar -Dfile=F:\iVMS9620\Downloads\h2-1.4.197.jar</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/maven/">maven</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/tips/">tips</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Linux下排查Java服务CPU飙升" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/23/Linux下排查Java服务CPU飙升/" class="article-date">
-  	<time datetime="2018-03-23T12:08:00.000Z" itemprop="datePublished">2018-03-23</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/23/Linux下排查Java服务CPU飙升/">Linux下排查Java服务CPU飙升</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>大致步骤：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//拿到进程号</span><br><span class="line">ps -ef|grep java</span><br><span class="line">//查线程CPU占用</span><br><span class="line">ps -mp PID -o THREAD,tid,time </span><br><span class="line">//查到的线程号转成 16进制</span><br><span class="line">printf &quot;%x\n&quot; tid</span><br><span class="line">// 打印线程堆栈</span><br><span class="line">jstack PID|grep tid</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mybatis/">Mybatis</a></li></ul>
 	</div>
 
       
@@ -463,79 +627,9 @@
 
 
   
-    <article id="post-PostgreSQL的一些函数应用" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/22/PostgreSQL的一些函数应用/" class="article-date">
-  	<time datetime="2018-03-22T08:15:00.000Z" itemprop="datePublished">2018-03-22</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/22/PostgreSQL的一些函数应用/">PostgreSQL的一些函数应用</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><ul>
-<li><p>replace<br>替换更新</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> table_1 <span class="keyword">set</span> column_1 = <span class="keyword">replace</span>(column_1,<span class="string">"原值"</span>,<span class="string">"新值"</span>);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>string_agg<br>string聚合</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> string_agg(tablename, <span class="string">','</span>) <span class="keyword">from</span> pg_tables <span class="keyword">where</span> SCHEMANAME=<span class="string">'public'</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>|| 字符串拼接</p>
-</li>
-</ul>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PostgreSQL/">PostgreSQL</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/tips/">tips</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
     </nav>
   
 </div>

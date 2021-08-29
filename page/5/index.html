@@ -177,11 +177,11 @@
 
       <div class="body-wrap">
   
-    <article id="post-踩坑记4-从零开始搭建练手web项目" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Java根据模板生成PDF文件" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/03/22/踩坑记4-从零开始搭建练手web项目/" class="article-date">
-  	<time datetime="2018-03-22T03:28:00.000Z" itemprop="datePublished">2018-03-22</time>
+      <a href="/2018/05/19/Java根据模板生成PDF文件/" class="article-date">
+  	<time datetime="2018-05-19T03:29:00.000Z" itemprop="datePublished">2018-05-19</time>
 </a>
     </div>
   
@@ -194,7 +194,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/22/踩坑记4-从零开始搭建练手web项目/">踩坑记4-Java Web相关</a>
+      <a class="article-title" href="/2018/05/19/Java根据模板生成PDF文件/">Java根据模板生成PDF文件</a>
     </h1>
   
 
@@ -203,146 +203,34 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="Filter使用不当导致服务空返回"><a href="#Filter使用不当导致服务空返回" class="headerlink" title="Filter使用不当导致服务空返回"></a>Filter使用不当导致服务空返回</h3><p>自定义的Filter验证通过后，没有调用职责链，导致链断开。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filterChain.doFilter(servletRequest, servletResponse);</span><br></pre></td></tr></table></figure></p>
-<h3 id="自定义权限校验的filter链，结束后又重复调用主链，导致接口执行两遍，返回两次结果"><a href="#自定义权限校验的filter链，结束后又重复调用主链，导致接口执行两遍，返回两次结果" class="headerlink" title="自定义权限校验的filter链，结束后又重复调用主链，导致接口执行两遍，返回两次结果"></a>自定义权限校验的filter链，结束后又重复调用主链，导致接口执行两遍，返回两次结果</h3>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/troubleshooting/">troubleshooting</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-curl命令示例" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/21/curl命令示例/" class="article-date">
-  	<time datetime="2018-03-21T08:15:00.000Z" itemprop="datePublished">2018-03-21</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/21/curl命令示例/">curl命令示例</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="示例："><a href="#示例：" class="headerlink" title="示例："></a>示例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -v  -H Content-Type:application/json -H appKey:2DHYBU6 -X POST --data &apos;[&#123; &quot;indexCode&quot;: &quot;00001&quot;&#125;]&apos; http://10.41.10.21/start</span><br></pre></td></tr></table></figure>
-<ul>
-<li>-v 展示详细信息</li>
-<li>-H 添加header</li>
-<li>-X POST 指定为Post请求</li>
-<li>–data HTTP POST方式传送数据</li>
+        <h3 id="需求场景"><a href="#需求场景" class="headerlink" title="需求场景"></a>需求场景</h3><pre><code>根据业务自定义模板，按照模板导出相应格式数据，包括文字、图片等
+</code></pre><h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><pre><code>1. Adobe Acrobаt编辑PDF模板
+2. itextpdf5 填入业务参数
+</code></pre><h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;com.itextpdf&lt;/groupId&gt;
+    &lt;artifactId&gt;itextpdf&lt;/artifactId&gt;
+    &lt;version&gt;5.5.13&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.itextpdf&lt;/groupId&gt;
+    &lt;artifactId&gt;itext-asian&lt;/artifactId&gt;
+    &lt;version&gt;5.2.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://developers.itextpdf.com/examples-itext5" target="_blank" rel="noopener">官网例子</a></p>
+<h3 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h3><h4 id="制作PDF模板"><a href="#制作PDF模板" class="headerlink" title="制作PDF模板"></a>制作PDF模板</h4><p>这个过程，没啥技术含量，只讲下经验：</p>
+<ol>
+<li>先用Word编辑模板，然后导出成PDF，比直接编辑PDF方便</li>
+<li>Acrobаt打开PDF，准备表单，需要注意<ul>
+<li>字体一定要选带中文的，比如宋体、雅黑等</li>
+<li>属性一定选可见</li>
+<li>表单域名 一定要和业务参数名对应</li>
 </ul>
-<p>更多用法可以参考<a href="http://www.ruanyifeng.com/blog/2019/09/curl-reference.html" target="_blank" rel="noopener">阮一峰的curl用法指南</a></p>
-<h3 id="windows修改命令行字符编码"><a href="#windows修改命令行字符编码" class="headerlink" title="windows修改命令行字符编码"></a>windows修改命令行字符编码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chcp 65001</span><br></pre></td></tr></table></figure>
-<p>然后右键属性，字体修改为<br>【Lucida Console】</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/命令/">命令</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/tips/">tips</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Spring @Transactional研究" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/21/Spring @Transactional研究/" class="article-date">
-  	<time datetime="2018-03-21T03:53:00.000Z" itemprop="datePublished">2018-03-21</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/21/Spring @Transactional研究/">Spring @Transactional学习</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>项目中出现几个关于Spring事务的异常，排查之后发现都是因为@Transactional应用不当导致的。</p>
-<h3 id="源码学习"><a href="#源码学习" class="headerlink" title="源码学习"></a>源码学习</h3><p>在此分享学习@Transactional的过程，先看源码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//可标记方法和类</span></span><br><span class="line"><span class="meta">@Target</span>(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</span><br><span class="line"><span class="comment">//运行时生效</span></span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="comment">//自动继承</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Transactional &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//指定TransactionManager</span></span><br><span class="line">	<span class="meta">@AliasFor</span>(<span class="string">"transactionManager"</span>)</span><br><span class="line">	<span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//指定TransactionManager</span></span><br><span class="line">	<span class="meta">@AliasFor</span>(<span class="string">"value"</span>)</span><br><span class="line">	<span class="function">String <span class="title">transactionManager</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;</span><br><span class="line">	<span class="comment">//指定事务传播设置</span></span><br><span class="line">	<span class="function">Propagation <span class="title">propagation</span><span class="params">()</span> <span class="keyword">default</span> Propagation.REQUIRED</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//指定事务隔离级别</span></span><br><span class="line">	<span class="function">Isolation <span class="title">isolation</span><span class="params">()</span> <span class="keyword">default</span> Isolation.DEFAULT</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//指定超时时间</span></span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">timeout</span><span class="params">()</span> <span class="keyword">default</span> TransactionDefinition.TIMEOUT_DEFAULT</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//标记只读事务</span></span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">readOnly</span><span class="params">()</span> <span class="keyword">default</span> <span class="keyword">false</span></span>;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">//指定回滚的异常类型</span></span><br><span class="line">	Class&lt;? extends Throwable&gt;[] rollbackFor() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">	String[] rollbackForClassName() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line">	</span><br><span class="line">  <span class="comment">//指定不会滚的异常类型</span></span><br><span class="line">	Class&lt;? extends Throwable&gt;[] noRollbackFor() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">	String[] noRollbackForClassName() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>除了Propagation其他设置都比较简单，其中Isolation总共有5种，Default就是采用数据库默认的事务隔离级别，其他四种分别指定对应数据库的隔离级别，感兴趣的话可以看下<a href>《数据库事务》</a></p>
-<p>而Propagation可以看做使用事务的策略，下面来看下Propagation的代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Propagation &#123;</span><br><span class="line">    <span class="comment">//REQUIRED必须有事务，也就是说当前线程有事务就用，没有就New一个</span></span><br><span class="line">	REQUIRED(TransactionDefinition.PROPAGATION_REQUIRED),</span><br><span class="line"></span><br><span class="line">   <span class="comment">//支持事务，即有事务就用，没有就不用</span></span><br><span class="line">	SUPPORTS(TransactionDefinition.PROPAGATION_SUPPORTS),</span><br><span class="line"></span><br><span class="line">  <span class="comment">//强制事务，必须有，没有就抛异常</span></span><br><span class="line">	MANDATORY(TransactionDefinition.PROPAGATION_MANDATORY),</span><br><span class="line"></span><br><span class="line">  <span class="comment">//必须new事务</span></span><br><span class="line">	REQUIRES_NEW(TransactionDefinition.PROPAGATION_REQUIRES_NEW),</span><br><span class="line"></span><br><span class="line">  <span class="comment">//非事务操作，暂停当前事务，只对分布式JtaTransactionManager有效</span></span><br><span class="line">	NOT_SUPPORTED(TransactionDefinition.PROPAGATION_NOT_SUPPORTED),</span><br><span class="line"></span><br><span class="line">  <span class="comment">//不能在事务内执行，存在事务则抛异常</span></span><br><span class="line">	NEVER(TransactionDefinition.PROPAGATION_NEVER),</span><br><span class="line">    <span class="comment">//嵌套事务(JDBC3.0 DataSourceTransactionManager下有效)</span></span><br><span class="line">	NESTED(TransactionDefinition.PROPAGATION_NESTED);</span><br><span class="line">    </span><br><span class="line">	<span class="comment">//省略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>场景： 循环内部调用Transactional方法时，可以设置为Propagation.REQUIRES_NEW 并在循环体内部捕捉异常，防止单个操作失败，导致所有操作都被回滚。</p>
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ol>
-<li>只对public方法生效</li>
-<li>自调用无效：被内部其他方法调用时，不生效<br>据说AspectJ可以避免这两种情况，有待研究</li>
+</li>
+</ol>
+<h4 id="根据模板生成文件"><a href="#根据模板生成文件" class="headerlink" title="根据模板生成文件"></a>根据模板生成文件</h4><p>用了PdfReader、PdfStamper和AcroFields，实现文本域和图像域内容的写入。<br>params参数集的key必须与表单域名一一对应，其他的直接看代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"><span class="keyword">import</span> java.io.FileOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.itextpdf.text.DocumentException;</span><br><span class="line"><span class="keyword">import</span> com.itextpdf.text.Image;</span><br><span class="line"><span class="keyword">import</span> com.itextpdf.text.pdf.AcroFields;</span><br><span class="line"><span class="keyword">import</span> com.itextpdf.text.pdf.PdfReader;</span><br><span class="line"><span class="keyword">import</span> com.itextpdf.text.pdf.PdfStamper;</span><br><span class="line"><span class="keyword">import</span> com.itextpdf.text.pdf.PushbuttonField;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PdfUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> src PDF模板路径</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> dest 生成文件路径</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> params 参数集。若为图片，key中需包含image，value为图片地址</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> DocumentException</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">generatePDF</span><span class="params">(String src, String dest, Map&lt;String,String&gt; params)</span> <span class="keyword">throws</span> DocumentException, IOException </span>&#123;</span><br><span class="line"></span><br><span class="line">        File file = <span class="keyword">new</span> File(dest);</span><br><span class="line">        file.getParentFile().mkdirs();</span><br><span class="line">        PdfReader reader =<span class="keyword">null</span>;</span><br><span class="line">        PdfStamper stamper = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            reader= <span class="keyword">new</span> PdfReader(src);</span><br><span class="line">            stamper = <span class="keyword">new</span> PdfStamper(reader, <span class="keyword">new</span> FileOutputStream(dest));</span><br><span class="line">            AcroFields form = stamper.getAcroFields();</span><br><span class="line">            <span class="keyword">for</span> (String key :form.getFields().keySet())&#123;</span><br><span class="line">                <span class="keyword">if</span> (params.get(key)!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                    <span class="comment">//根据表单域名区分类型</span></span><br><span class="line">                    <span class="keyword">if</span> (!key.startsWith(<span class="string">"Image"</span>))&#123;</span><br><span class="line">                        <span class="comment">//设置文本域参数值</span></span><br><span class="line">                        form.setField(key,params.get(key));</span><br><span class="line">                    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                        <span class="comment">//将图片写入指定的field</span></span><br><span class="line">                        Image image = Image.getInstance(params.get(key));</span><br><span class="line">                        PushbuttonField pb = form.getNewPushbuttonFromField(key);</span><br><span class="line">                        pb.setImage(image);</span><br><span class="line">                        form.replacePushbuttonField(key, pb.getField());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            stamper.setFormFlattening(<span class="keyword">true</span>);</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (stamper!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                    stamper.close();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (reader!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                    reader.close();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h3><ol>
+<li>IText类库的功能非常强大，支持各种控件的操作，包括表单、表格、字体、图片等，还具有文件合并、转格式、加密、签名等功能。<br>可惜的是中文的资料不多，如果需要深入使用，建议直接去官网上看API文档和Examples示例。</li>
+<li>另外，由于是国外的产品，对中文的处理有一些坑在官网上并未提及，需要想办法解决，比如前面依赖的itext-asian包和模板编辑时字体的选择 就属此类。</li>
 </ol>
 
       
@@ -352,7 +240,7 @@
       
       
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/itext5/">itext5</a></li></ul>
 	</div>
 
       
@@ -378,11 +266,11 @@
 
 
   
-    <article id="post-Spring定时任务BLOCK问题排查" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-归档历史表后Mysql重启自增主键重置问题" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/03/16/Spring定时任务BLOCK问题排查/" class="article-date">
-  	<time datetime="2018-03-16T08:33:00.000Z" itemprop="datePublished">2018-03-16</time>
+      <a href="/2018/05/19/归档历史表后Mysql重启自增主键重置问题/" class="article-date">
+  	<time datetime="2018-05-19T03:29:00.000Z" itemprop="datePublished">2018-05-19</time>
 </a>
     </div>
   
@@ -395,7 +283,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/16/Spring定时任务BLOCK问题排查/">Spring定时任务BLOCK问题排查</a>
+      <a class="article-title" href="/2018/05/19/归档历史表后Mysql重启自增主键重置问题/">归档历史表后Mysql重启自增主键重置问题</a>
     </h1>
   
 
@@ -404,15 +292,16 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h4 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h4><p>设备状态不正确，查日志发现间定时轮询设备状态的任务 已经快一天没打日志了。<br>另外：</p>
-<ol>
-<li>日志没有相关错误信息</li>
-<li>其它定时任务正常执行</li>
-</ol>
-<h3 id="解决过程"><a href="#解决过程" class="headerlink" title="解决过程"></a>解决过程</h3><p>在StackOVerFlow上搜到一个类似的<a href="http://stackoverflow.com/questions/17909404/spring-scheduler-stops-unexpectedly" target="_blank" rel="noopener">问题</a>，是由定时任务中的HttpClient阻塞引起的。<br>相似度很高，都是在Scheduled Task中发起远程调用。<br>参考回答，先用jstack -F pid 拿到线程快照，查了一下，发现该任务的堆栈Block在ArrayBlockingQueue.take()方法上，代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HkpClientHandler</span> <span class="keyword">extends</span> <span class="title">SimpleChannelInboundHandler</span>&lt;<span class="title">MessagePackage</span>&gt; </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> BlockingQueue&lt;Object&gt; response = <span class="keyword">new</span> ArrayBlockingQueue&lt;Object&gt;(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">channelRead0</span><span class="params">(ChannelHandlerContext ctx, MessagePackage msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		response.add(msg.getXmlMessage());</span><br><span class="line">		ctx.close();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getResponse</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">  		Object result = response.take();</span><br><span class="line">  		<span class="keyword">if</span> (result <span class="keyword">instanceof</span> Throwable) &#123;</span><br><span class="line">  			Throwable cause = (Throwable) result;</span><br><span class="line">  			<span class="keyword">throw</span> <span class="keyword">new</span> ServerException(ResponseCode.FAIL, cause);</span><br><span class="line">  		&#125;</span><br><span class="line">  		<span class="keyword">return</span> (String) result;</span><br><span class="line">  	&#125;</span><br><span class="line">  	<span class="comment">//省略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>此处在netty的ClientHandler中用BlockingQueue存放Decoded Response，这样调用HkpClientInitializer.getResponse()就可以阻塞直到服务端返回。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HkpClientInitializer</span> <span class="keyword">extends</span> <span class="title">ChannelInitializer</span>&lt;<span class="title">SocketChannel</span>&gt; </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> HkpClientHandler clientHandler = <span class="keyword">new</span> HkpClientHandler();</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		ChannelPipeline pipeline = ch.pipeline();</span><br><span class="line"></span><br><span class="line">		pipeline.addLast(<span class="keyword">new</span> LoggingHandler());</span><br><span class="line">		pipeline.addLast(<span class="string">"MessageDecoder"</span>, <span class="keyword">new</span> MessagePackageDecoder(<span class="number">1024</span> * <span class="number">1024</span>, <span class="number">4</span>, <span class="number">4</span>, -<span class="number">8</span>, <span class="number">0</span>));</span><br><span class="line">		pipeline.addLast(<span class="string">"MessageEncoder"</span>, <span class="keyword">new</span> MessagePackageEncoder());</span><br><span class="line">		pipeline.addLast(<span class="string">"ReadTimeout"</span>, <span class="keyword">new</span> ReadTimeoutHandler(<span class="number">5</span>));</span><br><span class="line">		<span class="comment">// 客户端的逻辑</span></span><br><span class="line">		pipeline.addLast(<span class="string">"handler"</span>, clientHandler);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getResponse</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">  		<span class="keyword">return</span> clientHandler.getResponse();</span><br><span class="line">  	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>但是万万没想到，都已经设置了ReadTimeout，还是被阻塞了，对照了服务端的日志，发现服务端返回毫无问题。由于时间紧急，考虑到问题出现概率较小、单次状态查询失败几无影响，阻塞的地方改成快速失败足以解决问题：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Object result = response.poll(<span class="number">8</span>, TimeUnit.SECONDS);</span><br><span class="line"><span class="keyword">if</span> (result == <span class="keyword">null</span>)&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> ServerException(<span class="string">"Timeout recieving response from remote!"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="根因分析"><a href="#根因分析" class="headerlink" title="根因分析"></a>根因分析</h3><p>虽然暂时解决了问题，但是这个Netty客户端无疑还有瑕疵，偶尔收不到服务端的返回对于某些业务是无法接受的。<br>因此，还需要找到问题的根本原因。<br>从channelRead0入手，往上追溯，看看信息在哪里被遗漏掉了。</p>
+        <h3 id="问题场景"><a href="#问题场景" class="headerlink" title="问题场景"></a>问题场景</h3><pre><code>COP日初始化时，会将当前表数据归档到历史表，然后把数据从当前表删除。
+由于MySql InnoDB数据库自增列auto_increment的最大值保存在内存中，启动后auto_increment会重置为当前表的最大值+1。
+如果此时重启数据库，由于当前表无数据，重启后当前表新增的数据主键就变为1。
+再次日初始化时，由于历史表中已存在主键为1的数据，就会主键冲突。
+</code></pre><h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><pre><code>1. 升级Mysql到8.0.0版本 (参考官网bug issue，未验证) 
+2. 为当前表添加触发器，插入数据时，取当前表和历史表中较大的auto_increment作为当前表的auto_increment。
+    以COP为例，当前表为cop_tliquidateins，历史表为cop_thisliquidateins，主键为liquidate_ins_id，按以下方式创建触发器：
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">delimiter $$</span><br><span class="line">drop trigger if exists trig_autoinc_liquidateins;</span><br><span class="line">CREATE TRIGGER trig_autoinc_liquidateins BEFORE INSERT ON cop_tliquidateins</span><br><span class="line">FOR EACH ROW</span><br><span class="line">BEGIN</span><br><span class="line">  declare auto_incr1 BIGINT;</span><br><span class="line">  declare auto_incr2 BIGINT;</span><br><span class="line">  IF (NEW.liquidate_ins_id=0) THEN</span><br><span class="line">    SELECT AUTO_INCREMENT INTO auto_incr1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = SCHEMA() and UPPER(TABLE_NAME) = UPPER(&apos;cop_tliquidateins&apos;);</span><br><span class="line">SELECT AUTO_INCREMENT INTO auto_incr2 FROM information_schema.TABLES WHERE TABLE_SCHEMA = SCHEMA() and UPPER(TABLE_NAME) = UPPER(&apos;cop_thisliquidateins&apos;);</span><br><span class="line">    IF (auto_incr2 &gt; auto_incr1) THEN</span><br><span class="line">      SET NEW.liquidate_ins_id = last_insert_id(auto_incr2);</span><br><span class="line">    END IF;</span><br><span class="line">  END IF;</span><br><span class="line">END;</span><br><span class="line">delimiter ;</span><br></pre></td></tr></table></figure>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://bugs.mysql.com/bug.php?id=199" target="_blank" rel="noopener">Mysql bugs</a></p>
+<p><a href="https://www.slicewise.net/index.php?id=82" target="_blank" rel="noopener">触发器方案</a></p>
 
       
     </div>
@@ -421,7 +310,223 @@
       
       
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mysql/">Mysql</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/blog/">blog</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-数据库性能优化思路总结" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/26/数据库性能优化思路总结/" class="article-date">
+  	<time datetime="2018-03-26T11:59:00.000Z" itemprop="datePublished">2018-03-26</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/26/数据库性能优化思路总结/">数据库性能优化思路总结</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li>性能需求——&gt;数据库设计<ul>
+<li>规范：<ul>
+<li>无重复 或多值的列</li>
+<li>非关键字全部依赖PK</li>
+<li>非关键字不互相依赖</li>
+</ul>
+</li>
+<li>合理冗余<ul>
+<li>主从/读写分离，分散压力</li>
+<li>表 </li>
+<li>字段 ，减少连接查询</li>
+</ul>
+</li>
+<li>主键、外键、索引设计</li>
+<li>字段设计(类型、长度)</li>
+<li>系统设计</li>
+</ul>
+</li>
+<li>编码——&gt;SQL优化、事务&amp;锁<ul>
+<li>JOIN使用</li>
+<li>少用*，多指定具体字段</li>
+</ul>
+</li>
+<li>数据库分割(中间件-mycat)<ul>
+<li>分区：在多个硬盘上存储(IO速度、存储量)</li>
+<li>分表<ul>
+<li>按时间分表，历史数据归档</li>
+<li>分表策略-&gt;Hash分表（myBatis）</li>
+</ul>
+</li>
+<li>分库<ul>
+<li>读写分离</li>
+<li>业务分库</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Blog/">Blog</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-添加jar包到本地Maven仓库" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/24/添加jar包到本地Maven仓库/" class="article-date">
+  	<time datetime="2018-03-24T02:29:00.000Z" itemprop="datePublished">2018-03-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/24/添加jar包到本地Maven仓库/">添加jar包到本地Maven仓库</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="添加jar包到本地Maven仓库"><a href="#添加jar包到本地Maven仓库" class="headerlink" title="添加jar包到本地Maven仓库"></a>添加jar包到本地Maven仓库</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn install:install-file -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.197 -Dpackaging=jar -Dfile=F:\iVMS9620\Downloads\h2-1.4.197.jar</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/maven/">maven</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/tips/">tips</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Linux下排查Java服务CPU飙升" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/23/Linux下排查Java服务CPU飙升/" class="article-date">
+  	<time datetime="2018-03-23T12:08:00.000Z" itemprop="datePublished">2018-03-23</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/23/Linux下排查Java服务CPU飙升/">Linux下排查Java服务CPU飙升</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>大致步骤：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//拿到进程号</span><br><span class="line">ps -ef|grep java</span><br><span class="line">//查线程CPU占用</span><br><span class="line">ps -mp PID -o THREAD,tid,time </span><br><span class="line">//查到的线程号转成 16进制</span><br><span class="line">printf &quot;%x\n&quot; tid</span><br><span class="line">// 打印线程堆栈</span><br><span class="line">jstack PID|grep tid</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
 	</div>
 
       
@@ -447,102 +552,9 @@
 
 
   
-    <article id="post-数据库事务特性" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/14/数据库事务特性/" class="article-date">
-  	<time datetime="2018-03-14T02:50:00.000Z" itemprop="datePublished">2018-03-14</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/14/数据库事务特性/">数据库事务</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="事务特性"><a href="#事务特性" class="headerlink" title="事务特性"></a>事务特性</h3><ul>
-<li>原子性</li>
-<li>一致性：事务执行前后 数据都出于一致性状态<ul>
-<li>逻辑正确，转账、消费等业务</li>
-<li>相同数据在多个位置 值一致</li>
-</ul>
-</li>
-<li>隔离性</li>
-<li>持久性</li>
-</ul>
-<h3 id="事务隔离级别-gt-决定锁的策略和粒度"><a href="#事务隔离级别-gt-决定锁的策略和粒度" class="headerlink" title="事务隔离级别==&gt;决定锁的策略和粒度"></a>事务隔离级别==&gt;决定锁的策略和粒度</h3><ol>
-<li><p>读未提交(Read uncommitted)。</p>
-<p>写操作加写锁，读操作不加锁。可防止丢失更新。</p>
-</li>
-</ol>
-<p>2.读已提交(Read committed)。</p>
-<p>  写操作加写锁，读操作加读锁。防止脏读。这是大部分关系数据库的默认 隔离级别。</p>
-<p>3.可重复读(Read repeatable)。</p>
-<p>对于读操作加读锁到事务结束，其他事务的更新操作只能等到事务结束之后进行。不禁insert和delete，引起幻读</p>
-<p>4.序列化(Serializable)。</p>
-<p>读操作加表级读锁至事务结束。可以禁止幻读。</p>
-<h3 id="数据库锁"><a href="#数据库锁" class="headerlink" title="数据库锁"></a>数据库锁</h3><h4 id="策略"><a href="#策略" class="headerlink" title="策略"></a>策略</h4><ul>
-<li>共享锁：允许多个持有，一般用来读</li>
-<li>排他锁</li>
-<li>更新锁：即将转化为排他锁，先读后更新，防止死锁</li>
-<li>意向锁 (在更粗的锁粒度上 标记锁占用)</li>
-</ul>
-<h4 id="粒度"><a href="#粒度" class="headerlink" title="粒度"></a>粒度</h4><ul>
-<li>行rowlock  </li>
-<li>页pagelock</li>
-<li>表tablelock</li>
-</ul>
-<h3 id="悲观锁-amp-乐观锁"><a href="#悲观锁-amp-乐观锁" class="headerlink" title="悲观锁&amp;乐观锁"></a>悲观锁&amp;乐观锁</h3><ul>
-<li>悲观锁：利用数据库本身的锁机制实现。<br>通过上面对数据库锁的了解，可以根据具体业务情况综合使用事务隔离级别与合理的手工指定锁的方式比如降低锁的粒度等减少并发等待。</li>
-<li>乐观锁：CAS策略。方式大概有以下3种<ul>
-<li>对记录加版本号. </li>
-<li>对记录加时间戳.</li>
-<li>对将要更新的数据进行提前读取、事后对比。</li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
     </nav>
   
 </div>
