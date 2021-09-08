@@ -177,6 +177,215 @@
 
       <div class="body-wrap">
   
+    <article id="post-curl命令示例" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/21/curl命令示例/" class="article-date">
+  	<time datetime="2018-03-21T08:15:00.000Z" itemprop="datePublished">2018-03-21</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/21/curl命令示例/">curl命令示例</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="示例："><a href="#示例：" class="headerlink" title="示例："></a>示例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -v  -H Content-Type:application/json -H appKey:2DHYBU6 -X POST --data &apos;[&#123; &quot;indexCode&quot;: &quot;00001&quot;&#125;]&apos; http://10.41.10.21/start</span><br></pre></td></tr></table></figure>
+<ul>
+<li>-v 展示详细信息</li>
+<li>-H 添加header</li>
+<li>-X POST 指定为Post请求</li>
+<li>–data HTTP POST方式传送数据</li>
+</ul>
+<p>更多用法可以参考<a href="http://www.ruanyifeng.com/blog/2019/09/curl-reference.html" target="_blank" rel="noopener">阮一峰的curl用法指南</a></p>
+<h3 id="windows修改命令行字符编码"><a href="#windows修改命令行字符编码" class="headerlink" title="windows修改命令行字符编码"></a>windows修改命令行字符编码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chcp 65001</span><br></pre></td></tr></table></figure>
+<p>然后右键属性，字体修改为<br>【Lucida Console】</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/命令/">命令</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/tips/">tips</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Spring @Transactional研究" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/21/Spring @Transactional研究/" class="article-date">
+  	<time datetime="2018-03-21T03:53:00.000Z" itemprop="datePublished">2018-03-21</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/21/Spring @Transactional研究/">Spring @Transactional学习</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>项目中出现几个关于Spring事务的异常，排查之后发现都是因为@Transactional应用不当导致的。</p>
+<h3 id="源码学习"><a href="#源码学习" class="headerlink" title="源码学习"></a>源码学习</h3><p>在此分享学习@Transactional的过程，先看源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//可标记方法和类</span></span><br><span class="line"><span class="meta">@Target</span>(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</span><br><span class="line"><span class="comment">//运行时生效</span></span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="comment">//自动继承</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Transactional &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//指定TransactionManager</span></span><br><span class="line">	<span class="meta">@AliasFor</span>(<span class="string">"transactionManager"</span>)</span><br><span class="line">	<span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//指定TransactionManager</span></span><br><span class="line">	<span class="meta">@AliasFor</span>(<span class="string">"value"</span>)</span><br><span class="line">	<span class="function">String <span class="title">transactionManager</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;</span><br><span class="line">	<span class="comment">//指定事务传播设置</span></span><br><span class="line">	<span class="function">Propagation <span class="title">propagation</span><span class="params">()</span> <span class="keyword">default</span> Propagation.REQUIRED</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//指定事务隔离级别</span></span><br><span class="line">	<span class="function">Isolation <span class="title">isolation</span><span class="params">()</span> <span class="keyword">default</span> Isolation.DEFAULT</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//指定超时时间</span></span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">timeout</span><span class="params">()</span> <span class="keyword">default</span> TransactionDefinition.TIMEOUT_DEFAULT</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//标记只读事务</span></span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">readOnly</span><span class="params">()</span> <span class="keyword">default</span> <span class="keyword">false</span></span>;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">//指定回滚的异常类型</span></span><br><span class="line">	Class&lt;? extends Throwable&gt;[] rollbackFor() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">	String[] rollbackForClassName() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line">	</span><br><span class="line">  <span class="comment">//指定不会滚的异常类型</span></span><br><span class="line">	Class&lt;? extends Throwable&gt;[] noRollbackFor() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">	String[] noRollbackForClassName() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>除了Propagation其他设置都比较简单，其中Isolation总共有5种，Default就是采用数据库默认的事务隔离级别，其他四种分别指定对应数据库的隔离级别，感兴趣的话可以看下<a href>《数据库事务》</a></p>
+<p>而Propagation可以看做使用事务的策略，下面来看下Propagation的代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Propagation &#123;</span><br><span class="line">    <span class="comment">//REQUIRED必须有事务，也就是说当前线程有事务就用，没有就New一个</span></span><br><span class="line">	REQUIRED(TransactionDefinition.PROPAGATION_REQUIRED),</span><br><span class="line"></span><br><span class="line">   <span class="comment">//支持事务，即有事务就用，没有就不用</span></span><br><span class="line">	SUPPORTS(TransactionDefinition.PROPAGATION_SUPPORTS),</span><br><span class="line"></span><br><span class="line">  <span class="comment">//强制事务，必须有，没有就抛异常</span></span><br><span class="line">	MANDATORY(TransactionDefinition.PROPAGATION_MANDATORY),</span><br><span class="line"></span><br><span class="line">  <span class="comment">//必须new事务</span></span><br><span class="line">	REQUIRES_NEW(TransactionDefinition.PROPAGATION_REQUIRES_NEW),</span><br><span class="line"></span><br><span class="line">  <span class="comment">//非事务操作，暂停当前事务，只对分布式JtaTransactionManager有效</span></span><br><span class="line">	NOT_SUPPORTED(TransactionDefinition.PROPAGATION_NOT_SUPPORTED),</span><br><span class="line"></span><br><span class="line">  <span class="comment">//不能在事务内执行，存在事务则抛异常</span></span><br><span class="line">	NEVER(TransactionDefinition.PROPAGATION_NEVER),</span><br><span class="line">    <span class="comment">//嵌套事务(JDBC3.0 DataSourceTransactionManager下有效)</span></span><br><span class="line">	NESTED(TransactionDefinition.PROPAGATION_NESTED);</span><br><span class="line">    </span><br><span class="line">	<span class="comment">//省略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>场景： 循环内部调用Transactional方法时，可以设置为Propagation.REQUIRES_NEW 并在循环体内部捕捉异常，防止单个操作失败，导致所有操作都被回滚。</p>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ol>
+<li>只对public方法生效</li>
+<li>自调用无效：被内部其他方法调用时，不生效<br>据说AspectJ可以避免这两种情况，有待研究</li>
+</ol>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/blog/">blog</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Spring定时任务BLOCK问题排查" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/16/Spring定时任务BLOCK问题排查/" class="article-date">
+  	<time datetime="2018-03-16T08:33:00.000Z" itemprop="datePublished">2018-03-16</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/16/Spring定时任务BLOCK问题排查/">Spring定时任务BLOCK问题排查</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h4><p>设备状态不正确，查日志发现间定时轮询设备状态的任务 已经快一天没打日志了。<br>另外：</p>
+<ol>
+<li>日志没有相关错误信息</li>
+<li>其它定时任务正常执行</li>
+</ol>
+<h3 id="解决过程"><a href="#解决过程" class="headerlink" title="解决过程"></a>解决过程</h3><p>在StackOVerFlow上搜到一个类似的<a href="http://stackoverflow.com/questions/17909404/spring-scheduler-stops-unexpectedly" target="_blank" rel="noopener">问题</a>，是由定时任务中的HttpClient阻塞引起的。<br>相似度很高，都是在Scheduled Task中发起远程调用。<br>参考回答，先用jstack -F pid 拿到线程快照，查了一下，发现该任务的堆栈Block在ArrayBlockingQueue.take()方法上，代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HkpClientHandler</span> <span class="keyword">extends</span> <span class="title">SimpleChannelInboundHandler</span>&lt;<span class="title">MessagePackage</span>&gt; </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> BlockingQueue&lt;Object&gt; response = <span class="keyword">new</span> ArrayBlockingQueue&lt;Object&gt;(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">channelRead0</span><span class="params">(ChannelHandlerContext ctx, MessagePackage msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		response.add(msg.getXmlMessage());</span><br><span class="line">		ctx.close();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getResponse</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">  		Object result = response.take();</span><br><span class="line">  		<span class="keyword">if</span> (result <span class="keyword">instanceof</span> Throwable) &#123;</span><br><span class="line">  			Throwable cause = (Throwable) result;</span><br><span class="line">  			<span class="keyword">throw</span> <span class="keyword">new</span> ServerException(ResponseCode.FAIL, cause);</span><br><span class="line">  		&#125;</span><br><span class="line">  		<span class="keyword">return</span> (String) result;</span><br><span class="line">  	&#125;</span><br><span class="line">  	<span class="comment">//省略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>此处在netty的ClientHandler中用BlockingQueue存放Decoded Response，这样调用HkpClientInitializer.getResponse()就可以阻塞直到服务端返回。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HkpClientInitializer</span> <span class="keyword">extends</span> <span class="title">ChannelInitializer</span>&lt;<span class="title">SocketChannel</span>&gt; </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> HkpClientHandler clientHandler = <span class="keyword">new</span> HkpClientHandler();</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		ChannelPipeline pipeline = ch.pipeline();</span><br><span class="line"></span><br><span class="line">		pipeline.addLast(<span class="keyword">new</span> LoggingHandler());</span><br><span class="line">		pipeline.addLast(<span class="string">"MessageDecoder"</span>, <span class="keyword">new</span> MessagePackageDecoder(<span class="number">1024</span> * <span class="number">1024</span>, <span class="number">4</span>, <span class="number">4</span>, -<span class="number">8</span>, <span class="number">0</span>));</span><br><span class="line">		pipeline.addLast(<span class="string">"MessageEncoder"</span>, <span class="keyword">new</span> MessagePackageEncoder());</span><br><span class="line">		pipeline.addLast(<span class="string">"ReadTimeout"</span>, <span class="keyword">new</span> ReadTimeoutHandler(<span class="number">5</span>));</span><br><span class="line">		<span class="comment">// 客户端的逻辑</span></span><br><span class="line">		pipeline.addLast(<span class="string">"handler"</span>, clientHandler);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getResponse</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">  		<span class="keyword">return</span> clientHandler.getResponse();</span><br><span class="line">  	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是万万没想到，都已经设置了ReadTimeout，还是被阻塞了，对照了服务端的日志，发现服务端返回毫无问题。由于时间紧急，考虑到问题出现概率较小、单次状态查询失败几无影响，阻塞的地方改成快速失败足以解决问题：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Object result = response.poll(<span class="number">8</span>, TimeUnit.SECONDS);</span><br><span class="line"><span class="keyword">if</span> (result == <span class="keyword">null</span>)&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> ServerException(<span class="string">"Timeout recieving response from remote!"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="根因分析"><a href="#根因分析" class="headerlink" title="根因分析"></a>根因分析</h3><p>虽然暂时解决了问题，但是这个Netty客户端无疑还有瑕疵，偶尔收不到服务端的返回对于某些业务是无法接受的。<br>因此，还需要找到问题的根本原因。<br>从channelRead0入手，往上追溯，看看信息在哪里被遗漏掉了。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/troubleshooting/">troubleshooting</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-数据库事务特性" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -349,396 +558,9 @@
 
 
   
-    <article id="post-wsimport和xjc命令" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/12/wsimport和xjc命令/" class="article-date">
-  	<time datetime="2018-03-12T07:29:00.000Z" itemprop="datePublished">2018-03-12</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/12/wsimport和xjc命令/">wsimport和xjc命令</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>-encoding utf-8 指定编码集</p>
-<h3 id="wsimport-生成Webservice客户端"><a href="#wsimport-生成Webservice客户端" class="headerlink" title="wsimport 生成Webservice客户端"></a>wsimport 生成Webservice客户端</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsimport -s D:\temp\s -p com.map -verbose http://ws.webxml.com.cn/WebServices/MobileCodeWS.asmx?wsdl</span><br></pre></td></tr></table></figure>
-<p>用法详见：wsimport -help</p>
-<h3 id="xjc-根据xsd生成Java-Bean"><a href="#xjc-根据xsd生成Java-Bean" class="headerlink" title="xjc 根据xsd生成Java Bean"></a>xjc 根据xsd生成Java Bean</h3><p>用法详见: xjc -help</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WebService/">WebService</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XML/">XML</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/tips/">tips</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-常用JVM参数" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/02/28/常用JVM参数/" class="article-date">
-  	<time datetime="2018-02-28T10:45:00.000Z" itemprop="datePublished">2018-02-28</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/28/常用JVM参数/">常用JVM参数</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="内存设置"><a href="#内存设置" class="headerlink" title="内存设置"></a>内存设置</h3><table>
-<thead>
-<tr>
-<th>参数</th>
-<th style="text-align:center">含义</th>
-<th style="text-align:right">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>-Xms1024m</td>
-<td style="text-align:center">初始堆大小</td>
-</tr>
-<tr>
-<td>-Xmx1024m</td>
-<td style="text-align:center">最大堆大小</td>
-</tr>
-<tr>
-<td>-Xmn500m</td>
-<td style="text-align:center">年轻代大小</td>
-</tr>
-<tr>
-<td>-Xss1024k</td>
-<td style="text-align:center">单个线程栈</td>
-</tr>
-<tr>
-<td>-XX:PermSize=200m</td>
-<td style="text-align:center">永久代</td>
-<td style="text-align:right">before java8</td>
-</tr>
-<tr>
-<td>-XX:MaxPermSize=300m</td>
-<td style="text-align:center">永久代</td>
-<td style="text-align:right">before java8</td>
-</tr>
-<tr>
-<td>-XX:MetaspaceSize</td>
-<td style="text-align:center">元数据</td>
-<td style="text-align:right">after 8</td>
-</tr>
-<tr>
-<td>-XX:MaxMetaspaceSize</td>
-<td style="text-align:center">元数据</td>
-<td style="text-align:right">after 8</td>
-</tr>
-<tr>
-<td>-XX:NewRatio=4</td>
-<td style="text-align:center">Olden区与Young区比例</td>
-<td style="text-align:right">4：1</td>
-</tr>
-<tr>
-<td>-XX:SurvivorRatio=8</td>
-<td style="text-align:center">Eden与Survivor区比例</td>
-<td style="text-align:right">8：1：1</td>
-</tr>
-<tr>
-<td>-XX:LargePageSizeInBytes</td>
-<td style="text-align:center">内存页大小</td>
-<td style="text-align:right"><a href="http://blog.csdn.net/yangpl_tale/article/details/76851149" target="_blank" rel="noopener">JVM优化之调整大内存分页</a></td>
-</tr>
-</tbody>
-</table>
-<h3 id="GC设置"><a href="#GC设置" class="headerlink" title="GC设置"></a>GC设置</h3><table>
-<thead>
-<tr>
-<th>参数</th>
-<th style="text-align:center">含义</th>
-<th style="text-align:right">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>-XX:+DisableExplicitGC</td>
-<td style="text-align:center">关闭System.gc()</td>
-<td style="text-align:right">慎用</td>
-</tr>
-<tr>
-<td>-XX:MaxTenuringThreshold</td>
-<td style="text-align:center">晋升年龄</td>
-</tr>
-<tr>
-<td>-XX:PretenureSizeThreshold=1024k</td>
-<td style="text-align:center">Olden区直接分配对象临界值</td>
-</tr>
-<tr>
-<td>-Xnoclassgc</td>
-<td style="text-align:center">禁用类回收</td>
-</tr>
-<tr>
-<td>-XX:SoftRefLRUPolicyMSPerMB=1s</td>
-<td style="text-align:center">软引用存活秒数/每空闲MB</td>
-</tr>
-<tr>
-<td>-XX:+UseParNewGC</td>
-<td style="text-align:center">并行回收YOUNG区，CMS默认搭档</td>
-</tr>
-<tr>
-<td>-XX:+UseConcMarkSweepGC</td>
-<td style="text-align:center">CMS回收老年代</td>
-</tr>
-<tr>
-<td>-XX:CMSFullGCsBeforeCompaction=3</td>
-<td style="text-align:center">3次FullGC后，整理老年代</td>
-</tr>
-<tr>
-<td>-XX:+CMSParallelRemarkEnabled</td>
-<td style="text-align:center">并行标记，降低停顿</td>
-</tr>
-<tr>
-<td>-XX:CMSInitiatingOccupancyFraction=85</td>
-<td style="text-align:center">Olden区85%后开始GC</td>
-</tr>
-<tr>
-<td>-XX:+CMSClassUnloadingEnabled</td>
-<td style="text-align:center">开启类卸载</td>
-</tr>
-</tbody>
-</table>
-<h3 id="调试参数"><a href="#调试参数" class="headerlink" title="调试参数"></a>调试参数</h3><table>
-<thead>
-<tr>
-<th>参数</th>
-<th style="text-align:center">含义</th>
-<th style="text-align:right">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>-XX:+PrintGCDetails</td>
-<td style="text-align:center">GC日志</td>
-</tr>
-<tr>
-<td>-XX:+PrintGCApplicationStoppedTime</td>
-<td style="text-align:center">GC停顿时间</td>
-</tr>
-<tr>
-<td>-verbose:gc/class/jni</td>
-<td style="text-align:center">查看gc、类加载、本地方法调用</td>
-</tr>
-<tr>
-<td>-XX:+PrintHeapAtGC</td>
-<td style="text-align:center">打印GC触发时的堆栈</td>
-</tr>
-<tr>
-<td>-Xloggc:log/gc.log</td>
-<td style="text-align:center">输出gc log</td>
-</tr>
-<tr>
-<td>-XX:+HeapDumpOnOutOfMemoryError</td>
-<td style="text-align:center">内存溢出时产生堆dump</td>
-</tr>
-<tr>
-<td>-XX:+HeapDumpOnCtrlBreak</td>
-<td style="text-align:center">Crtl+Break产生dump</td>
-</tr>
-</tbody>
-</table>
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>-Xverify:none 跳过编译检查<br>服务器推荐GC参数：<br>-Xloggc:gc.log<br>-XX:+PrintGCDetails<br>-XX:+PrintGCApplicationStoppedTime<br>-XX:+PrintGCApplicationConcurrentTime</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JVM/">JVM</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/memo/">memo</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-读《深入理解Java虚拟机》2-JDK工具" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/02/11/读《深入理解Java虚拟机》2-JDK工具/" class="article-date">
-  	<time datetime="2018-02-11T05:47:00.000Z" itemprop="datePublished">2018-02-11</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/11/读《深入理解Java虚拟机》2-JDK工具/">读《深入理解Java虚拟机》2-JDK工具</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>JDK bin目录下提供了很多工具，大部分基于lib/tools.jar。<br>工具命令命名规则参考了unix系统的命令</p>
-<ul>
-<li>jps [options] [hostid] 查询虚拟机进程状况<ul>
-<li>-q 只输出lvmid </li>
-<li>-m 输出main函数的参数</li>
-<li>-l 输出主类全名，或jar包路径</li>
-<li>-v 输出进程启动的JVM参数</li>
-</ul>
-</li>
-<li>jstat [option vmid[interval[s|ms] [count]]] 监视进程状态,类加载、gc、编译等</li>
-</ul>
-<p><a href="https://imgchr.com/i/9JlFu4" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/02/12/9JlFu4.md.jpg" alt="9JlFu4.md.jpg"></a><br>jstat -gcutil 2764<br>S0：幸存1区当前使用比例<br>S1：幸存2区当前使用比例<br>E：伊甸园区使用比例<br>O：老年代使用比例<br>M：元数据区使用比例<br>CCS：压缩使用比例<br>YGC：年轻代垃圾回收次数<br>FGC：老年代垃圾回收次数<br>FGCT：老年代垃圾回收消耗时间<br>GCT：垃圾回收消耗总时间</p>
-<ul>
-<li><p>jinfo [option] vmid 查看配置信息 </p>
-<ul>
-<li>-sysprops查看System.getProperties()</li>
-<li>-flag name 查询jvm参数</li>
-<li>-flag name=value 设置jvm参数</li>
-</ul>
-</li>
-<li><p>jmap [option] vmid 生成堆dump等功能<br><a href="https://imgchr.com/i/9YqUXj" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/02/16/9YqUXj.md.png" alt="9YqUXj.md.png"></a></p>
-</li>
-<li><p>jhat 堆dump分析工具</p>
-</li>
-<li><p>jstack [option] vmid 生成线程快照</p>
-<ul>
-<li>-F 请求不响应时强制输出线程堆栈</li>
-<li>-l 附加锁信息</li>
-<li>-m 附加本地方法堆栈</li>
-</ul>
-<p>Thread.getAllStackTraces()查看线程堆栈</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Thread, StackTraceElement[]&gt; map = Thread.getAllStackTraces();</span><br><span class="line"><span class="keyword">for</span> (Entry&lt;Thread,StackTraceElement[]&gt; entry :map.entrySet())&#123;</span><br><span class="line">    <span class="keyword">if</span> (entry.getKey().equals(Thread.currentThread()))</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    System.out.println(<span class="string">"线程："</span>+entry.getKey().getName());</span><br><span class="line">    StackTraceElement[] traceElements = entry.getValue();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;traceElements.length ; i++) &#123;</span><br><span class="line">        System.out.println(traceElements[i].toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>JDK可视化工具</p>
-<ul>
-<li>JConsole 监控管理控制台，可视化jstate、jinfo、jstack等功能</li>
-<li>JVisualVM 可集成各种插件的故障处理工具，常用插件：<ul>
-<li>BTrace动态日志跟踪</li>
-<li>MBeans </li>
-<li>VisualGC</li>
-<li>JConsole Plugins</li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tools/">tools</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/note/">note</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
     </nav>
   
 </div>

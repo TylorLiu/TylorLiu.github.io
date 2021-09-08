@@ -177,11 +177,11 @@
 
       <div class="body-wrap">
   
-    <article id="post-责任链模式" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Linux常用命令" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/03/26/责任链模式/" class="article-date">
-  	<time datetime="2019-03-25T16:00:00.000Z" itemprop="datePublished">2019-03-26</time>
+      <a href="/2019/05/21/Linux常用命令/" class="article-date">
+  	<time datetime="2019-05-21T06:04:59.000Z" itemprop="datePublished">2019-05-21</time>
 </a>
     </div>
   
@@ -194,7 +194,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/26/责任链模式/">责任链模式</a>
+      <a class="article-title" href="/2019/05/21/Linux常用命令/">Linux常用命令</a>
     </h1>
   
 
@@ -203,24 +203,106 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="责任链（Chain-Of-Responsibility）"><a href="#责任链（Chain-Of-Responsibility）" class="headerlink" title="责任链（Chain Of Responsibility）"></a>责任链（Chain Of Responsibility）</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>顾名思义，责任链模式（Chain of Responsibility Pattern）为请求创建了一个接收者对象的链。这种模式给予请求的类型，对请求的发送者和接收者进行解耦。这种类型的设计模式属于行为型模式。</p>
-<p>在这种模式中，通常每个接收者都包含对另一个接收者的引用。如果一个对象不能处理该请求，那么它会把相同的请求传给下一个接收者，依此类推。</p>
-<h3 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h3><p>使多个对象都有机会处理请求，从而避免请求的发送者和接收者之间的耦合关系。将这些对象连成一条链，并沿着这条链发送该请求，直到有一个对象处理它为止。</p>
+        <ol>
+<li><p>tar</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//解压</span><br><span class="line">tar xf jdk-7u65-linux-x64.tar.gz -C /usr/local</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>netstat</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -anp|grep 5123</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>lsof -i 查看端口所属进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -i: 8080</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>df -h 查看硬盘占用</p>
+</li>
+<li>du -sh *  查当前文件夹下所有文件（夹）占用磁盘大小</li>
+</ol>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/blog/">blog</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-中介者模式" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/03/27/中介者模式/" class="article-date">
+  	<time datetime="2019-03-26T16:00:00.000Z" itemprop="datePublished">2019-03-27</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/27/中介者模式/">中介者模式</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="中介者（Mediator）"><a href="#中介者（Mediator）" class="headerlink" title="中介者（Mediator）"></a>中介者（Mediator）</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>中介者模式（Mediator Pattern）是用来降低多个对象和类之间的通信复杂性。这种模式提供了一个中介类，该类通常处理不同类之间的通信，并支持松耦合，使代码易于维护。中介者模式属于行为型模式。</p>
+<h3 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h3><p>集中相关对象之间复杂的沟通和控制方式。</p>
 <h3 id="Class-Diagram"><a href="#Class-Diagram" class="headerlink" title="Class Diagram"></a>Class Diagram</h3><ul>
-<li>Handler：定义处理请求的接口，并且实现后继链（successor）</li>
+<li>Mediator：中介者，定义一个接口用于与各同事（Colleague）对象通信。</li>
+<li>Colleague：同事，相关对象</li>
 </ul>
-<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/ca9f23bf-55a4-47b2-9534-a28e35397988.png"> </div><br></p>
-<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> Handler successor;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Handler</span><span class="params">(Handler successor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.successor = successor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(Request request)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler1</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteHandler1</span><span class="params">(Handler successor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(successor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (request.getType() == RequestType.TYPE1) &#123;</span><br><span class="line">            System.out.println(request.getName() + <span class="string">" is handle by ConcreteHandler1"</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (successor != <span class="keyword">null</span>) &#123;</span><br><span class="line">            successor.handleRequest(request);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler2</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteHandler2</span><span class="params">(Handler successor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(successor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (request.getType() == RequestType.TYPE2) &#123;</span><br><span class="line">            System.out.println(request.getName() + <span class="string">" is handle by ConcreteHandler2"</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (successor != <span class="keyword">null</span>) &#123;</span><br><span class="line">            successor.handleRequest(request);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Request</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> RequestType type;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Request</span><span class="params">(RequestType type, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.type = type;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RequestType <span class="title">getType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> type;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> RequestType &#123;</span><br><span class="line">    TYPE1, TYPE2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Handler handler1 = <span class="keyword">new</span> ConcreteHandler1(<span class="keyword">null</span>);</span><br><span class="line">        Handler handler2 = <span class="keyword">new</span> ConcreteHandler2(handler1);</span><br><span class="line"></span><br><span class="line">        Request request1 = <span class="keyword">new</span> Request(RequestType.TYPE1, <span class="string">"request1"</span>);</span><br><span class="line">        handler2.handleRequest(request1);</span><br><span class="line"></span><br><span class="line">        Request request2 = <span class="keyword">new</span> Request(RequestType.TYPE2, <span class="string">"request2"</span>);</span><br><span class="line">        handler2.handleRequest(request2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">request1 is handle by ConcreteHandler1</span><br><span class="line">request2 is handle by ConcreteHandler2</span><br></pre></td></tr></table></figure>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/30d6e95c-2e3c-4d32-bf4f-68128a70bc05.png"> </div><br></p>
+<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><p>Alarm（闹钟）、CoffeePot（咖啡壶）、Calendar（日历）、Sprinkler（喷头）是一组相关的对象，在某个对象的事件产生时需要去操作其它对象，形成了下面这种依赖结构：</p>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/82cfda3b-b53b-4c89-9fdb-26dd2db0cd02.jpg"> </div><br></p>
+<p>使用中介者模式可以将复杂的依赖结构变成星形结构：</p>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/5359cbf5-5a79-4874-9b17-f23c53c2cb80.jpg"> </div><br></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Colleague</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(Mediator mediator)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Alarm</span> <span class="keyword">extends</span> <span class="title">Colleague</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(Mediator mediator)</span> </span>&#123;</span><br><span class="line">        mediator.doEvent(<span class="string">"alarm"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doAlarm</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"doAlarm()"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CoffeePot</span> <span class="keyword">extends</span> <span class="title">Colleague</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(Mediator mediator)</span> </span>&#123;</span><br><span class="line">        mediator.doEvent(<span class="string">"coffeePot"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doCoffeePot</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"doCoffeePot()"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Calender</span> <span class="keyword">extends</span> <span class="title">Colleague</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(Mediator mediator)</span> </span>&#123;</span><br><span class="line">        mediator.doEvent(<span class="string">"calender"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doCalender</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"doCalender()"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sprinkler</span> <span class="keyword">extends</span> <span class="title">Colleague</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(Mediator mediator)</span> </span>&#123;</span><br><span class="line">        mediator.doEvent(<span class="string">"sprinkler"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSprinkler</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"doSprinkler()"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Mediator</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">doEvent</span><span class="params">(String eventType)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteMediator</span> <span class="keyword">extends</span> <span class="title">Mediator</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Alarm alarm;</span><br><span class="line">    <span class="keyword">private</span> CoffeePot coffeePot;</span><br><span class="line">    <span class="keyword">private</span> Calender calender;</span><br><span class="line">    <span class="keyword">private</span> Sprinkler sprinkler;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteMediator</span><span class="params">(Alarm alarm, CoffeePot coffeePot, Calender calender, Sprinkler sprinkler)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.alarm = alarm;</span><br><span class="line">        <span class="keyword">this</span>.coffeePot = coffeePot;</span><br><span class="line">        <span class="keyword">this</span>.calender = calender;</span><br><span class="line">        <span class="keyword">this</span>.sprinkler = sprinkler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doEvent</span><span class="params">(String eventType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (eventType) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"alarm"</span>:</span><br><span class="line">                doAlarmEvent();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"coffeePot"</span>:</span><br><span class="line">                doCoffeePotEvent();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"calender"</span>:</span><br><span class="line">                doCalenderEvent();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                doSprinklerEvent();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doAlarmEvent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        alarm.doAlarm();</span><br><span class="line">        coffeePot.doCoffeePot();</span><br><span class="line">        calender.doCalender();</span><br><span class="line">        sprinkler.doSprinkler();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doCoffeePotEvent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doCalenderEvent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSprinklerEvent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Alarm alarm = <span class="keyword">new</span> Alarm();</span><br><span class="line">        CoffeePot coffeePot = <span class="keyword">new</span> CoffeePot();</span><br><span class="line">        Calender calender = <span class="keyword">new</span> Calender();</span><br><span class="line">        Sprinkler sprinkler = <span class="keyword">new</span> Sprinkler();</span><br><span class="line">        Mediator mediator = <span class="keyword">new</span> ConcreteMediator(alarm, coffeePot, calender, sprinkler);</span><br><span class="line">        <span class="comment">// 闹钟事件到达，调用中介者就可以操作相关对象</span></span><br><span class="line">        alarm.onEvent(mediator);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">doAlarm()</span><br><span class="line">doCoffeePot()</span><br><span class="line">doCalender()</span><br><span class="line">doSprinkler()</span><br></pre></td></tr></table></figure>
 <h3 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h3><ul>
-<li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/logging/Logger.html#log%28java.util.logging.Level,%20java.lang.String%29" target="_blank" rel="noopener">java.util.logging.Logger#log()</a></li>
-<li><a href="https://commons.apache.org/proper/commons-chain/index.html" target="_blank" rel="noopener">Apache Commons Chain</a></li>
-<li><a href="http://docs.oracle.com/javaee/7/api/javax/servlet/Filter.html#doFilter-javax.servlet.ServletRequest-javax.servlet.ServletResponse-javax.servlet.FilterChain-" target="_blank" rel="noopener">javax.servlet.Filter#doFilter()</a></li>
+<li>All scheduleXXX() methods of <a href="http://docs.oracle.com/javase/8/docs/api/java/util/Timer.html" target="_blank" rel="noopener">java.util.Timer</a></li>
+<li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Executor.html#execute-java.lang.Runnable-" target="_blank" rel="noopener">java.util.concurrent.Executor#execute()</a></li>
+<li>submit() and invokeXXX() methods of <a href="http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html" target="_blank" rel="noopener">java.util.concurrent.ExecutorService</a></li>
+<li>scheduleXXX() methods of <a href="http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ScheduledExecutorService.html" target="_blank" rel="noopener">java.util.concurrent.ScheduledExecutorService</a></li>
+<li><a href="http://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html#invoke-java.lang.Object-java.lang.Object...-" target="_blank" rel="noopener">java.lang.reflect.Method#invoke()</a></li>
 </ul>
 
       
@@ -339,11 +421,11 @@
 
 
   
-    <article id="post-SpringBoot集成JRES-RPC" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-责任链模式" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/11/01/SpringBoot集成JRES-RPC/" class="article-date">
-  	<time datetime="2018-11-01T02:03:00.000Z" itemprop="datePublished">2018-11-01</time>
+      <a href="/2019/03/26/责任链模式/" class="article-date">
+  	<time datetime="2019-03-25T16:00:00.000Z" itemprop="datePublished">2019-03-26</time>
 </a>
     </div>
   
@@ -356,7 +438,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/01/SpringBoot集成JRES-RPC/">SpringBoot集成JRES-RPC 实现T2服务</a>
+      <a class="article-title" href="/2019/03/26/责任链模式/">责任链模式</a>
     </h1>
   
 
@@ -365,231 +447,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h4 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h4><ol>
-<li>需要使用Java对接第三方平台,提供给C程序调用</li>
-<li>保持项目架构简单、容易部署</li>
-</ol>
-<h4 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h4><ol>
-<li>新建一个SpringBoot项目</li>
-<li><p>参考<a href="http://rdc.hundsun.com/product/download/jresServer.htm" target="_blank" rel="noopener">JRES Server框架说明</a>，单独引入RPC组件，主要是引入以下依赖：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-api&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-spi-t2def&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-spi-spring4&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-common-core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在启动类中引入JRES-RPC的Bean配置并设置配置文件路径<br><a href="https://imgchr.com/i/iWrDl6" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/01/iWrDl6.md.png" alt="iWrDl6.md.png"></a></p>
-</li>
-<li>配置好server.properties和ares-app-config.xml文件，并放到resources目录下</li>
-<li>开发remoting接口，并使用HSAdmin工具测试 （可以咨询研发中心客服苏响）</li>
-</ol>
-<h4 id="遇到的一些问题"><a href="#遇到的一些问题" class="headerlink" title="遇到的一些问题"></a>遇到的一些问题</h4><ol>
-<li>引入SpringBoot的热部署工具spring-boot-devtools之后，参数为JavaBean的T2接口报argument type miss match。<br> 调试后发现，热部署工具使用RestartedClassLoader加载类，而T2接口的参数Bean是由其它的类加载器加载，所以虽然是同一个类型，但是Class对象不一致，反射调用method报错。<br> 移除spring-boot-devtools后成功解决。</li>
-<li>项目打成Jar包运行之后 发现T2Server没有启动，也没有报错。<br> 几经排查，对比Application类Main启动的方式下的日志,怀疑XML配置的JavaBean CepContextLoader没有加载，因此把配置文件从jresplus-rpc-spi-spring4中拿出来放到项目路径下，将其中的CepContextLoader改为@Bean加载。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="comment">//注释掉jresplus-cep-beans.xml里的CepContextLoader和SpringPluginFramework配置</span></span><br><span class="line"><span class="meta">@ImportResource</span>(&#123;<span class="string">"classpath:config/jresplus-cep-beans.xml"</span>,<span class="string">"classpath:config/remoting-main-beans.xml"</span>&#125;)</span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CopApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.setProperty(<span class="string">"JresConfigLocation"</span>,<span class="string">"classpath:server.properties"</span>);</span><br><span class="line">        SpringApplication.run(CopApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span>(<span class="string">"jres.framework"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> SpringPluginFramework <span class="title">springPluginFramework</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SpringPluginFramework();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function">CepContextLoader <span class="title">CepContextLoader</span><span class="params">(SpringPluginFramework springPluginFramework)</span></span>&#123;</span><br><span class="line">        CepContextLoader cepContextLoader = <span class="keyword">new</span> CepContextLoader();</span><br><span class="line">        cepContextLoader.setPropPath(<span class="string">"classpath*:ares-app-config.xml"</span>);</span><br><span class="line">        cepContextLoader.setFramework(springPluginFramework);</span><br><span class="line">        <span class="keyword">return</span>  cepContextLoader;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>重新打包后，测试可用。</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JAVA大纲" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/09/08/JAVA大纲/" class="article-date">
-  	<time datetime="2018-09-08T03:13:00.000Z" itemprop="datePublished">2018-09-08</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/08/JAVA大纲/">JAVA培训大纲</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h3><ul>
-<li>为什么要用java<ol>
-<li>平台无关性，方便跨平台部署</li>
-<li>面向对象(封装、继承、多态)</li>
-<li>强大的原生库 (屏蔽底层细节)  </li>
-<li>丰富的第三方库</li>
-<li>各种成熟的解决方案</li>
-<li>…</li>
-</ol>
-</li>
-<li>开发准备<ol>
-<li>JDK (源码、工具、JRE)</li>
-<li>Maven (管理第三方依赖，编译打包等)</li>
-<li>IDE (辅助编码、调试运行等)</li>
-<li>Web容器(tomcat/jetty等)    </li>
-</ol>
-</li>
-<li>要学哪些东西 (了解、会用、理解)<ol>
-<li>语法 (enum、注解)</li>
-<li>编码规范<ol>
-<li>命名</li>
-<li>日志</li>
-<li>异常处理</li>
-<li>注释</li>
-</ol>
-</li>
-<li>常用的原生类(java.lang、java.util)</li>
-<li>常用的框架<ol>
-<li>Spring&amp;SpringMVC</li>
-<li>MyBatis</li>
-</ol>
-</li>
-</ol>
-</li>
+        <h2 id="责任链（Chain-Of-Responsibility）"><a href="#责任链（Chain-Of-Responsibility）" class="headerlink" title="责任链（Chain Of Responsibility）"></a>责任链（Chain Of Responsibility）</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>顾名思义，责任链模式（Chain of Responsibility Pattern）为请求创建了一个接收者对象的链。这种模式给予请求的类型，对请求的发送者和接收者进行解耦。这种类型的设计模式属于行为型模式。</p>
+<p>在这种模式中，通常每个接收者都包含对另一个接收者的引用。如果一个对象不能处理该请求，那么它会把相同的请求传给下一个接收者，依此类推。</p>
+<h3 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h3><p>使多个对象都有机会处理请求，从而避免请求的发送者和接收者之间的耦合关系。将这些对象连成一条链，并沿着这条链发送该请求，直到有一个对象处理它为止。</p>
+<h3 id="Class-Diagram"><a href="#Class-Diagram" class="headerlink" title="Class Diagram"></a>Class Diagram</h3><ul>
+<li>Handler：定义处理请求的接口，并且实现后继链（successor）</li>
 </ul>
-<h3 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h3><ul>
-<li>并发编程</li>
-<li>抽象建模(服务、接口设计等)</li>
-<li>自顶向下、逐层分解</li>
-<li>JVM内存模型</li>
-<li>常见问题排查</li>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/ca9f23bf-55a4-47b2-9534-a28e35397988.png"> </div><br></p>
+<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> Handler successor;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Handler</span><span class="params">(Handler successor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.successor = successor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(Request request)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler1</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteHandler1</span><span class="params">(Handler successor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(successor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (request.getType() == RequestType.TYPE1) &#123;</span><br><span class="line">            System.out.println(request.getName() + <span class="string">" is handle by ConcreteHandler1"</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (successor != <span class="keyword">null</span>) &#123;</span><br><span class="line">            successor.handleRequest(request);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler2</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteHandler2</span><span class="params">(Handler successor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(successor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (request.getType() == RequestType.TYPE2) &#123;</span><br><span class="line">            System.out.println(request.getName() + <span class="string">" is handle by ConcreteHandler2"</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (successor != <span class="keyword">null</span>) &#123;</span><br><span class="line">            successor.handleRequest(request);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Request</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> RequestType type;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Request</span><span class="params">(RequestType type, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.type = type;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RequestType <span class="title">getType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> type;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> RequestType &#123;</span><br><span class="line">    TYPE1, TYPE2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Handler handler1 = <span class="keyword">new</span> ConcreteHandler1(<span class="keyword">null</span>);</span><br><span class="line">        Handler handler2 = <span class="keyword">new</span> ConcreteHandler2(handler1);</span><br><span class="line"></span><br><span class="line">        Request request1 = <span class="keyword">new</span> Request(RequestType.TYPE1, <span class="string">"request1"</span>);</span><br><span class="line">        handler2.handleRequest(request1);</span><br><span class="line"></span><br><span class="line">        Request request2 = <span class="keyword">new</span> Request(RequestType.TYPE2, <span class="string">"request2"</span>);</span><br><span class="line">        handler2.handleRequest(request2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">request1 is handle by ConcreteHandler1</span><br><span class="line">request2 is handle by ConcreteHandler2</span><br></pre></td></tr></table></figure>
+<h3 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h3><ul>
+<li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/logging/Logger.html#log%28java.util.logging.Level,%20java.lang.String%29" target="_blank" rel="noopener">java.util.logging.Logger#log()</a></li>
+<li><a href="https://commons.apache.org/proper/commons-chain/index.html" target="_blank" rel="noopener">Apache Commons Chain</a></li>
+<li><a href="http://docs.oracle.com/javaee/7/api/javax/servlet/Filter.html#doFilter-javax.servlet.ServletRequest-javax.servlet.ServletResponse-javax.servlet.FilterChain-" target="_blank" rel="noopener">javax.servlet.Filter#doFilter()</a></li>
 </ul>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-踩坑记5-Mybatis合集" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/05/19/踩坑记5-Mybatis合集/" class="article-date">
-  	<time datetime="2018-05-19T08:20:00.000Z" itemprop="datePublished">2018-05-19</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/19/踩坑记5-Mybatis合集/">踩坑记5-Mybatis合集</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>从刚参加工作开始就接触了Mybatis，但是大部分时候只是照猫画虎，一直没有系统的学习过，遇到些问题就很容易卡住，搜不到解决方法，只能参照错误逐行排查来定位问题，效率十分低下。<br>反思之后，决定从头学习一下，顺便整理下踩过的坑，分析下原因。<br><a href="http://www.mybatis.org/mybatis-3/index.html#" target="_blank" rel="noopener">官网链接</a></p>
-<h3 id="MyBatis是什么"><a href="#MyBatis是什么" class="headerlink" title="MyBatis是什么"></a>MyBatis是什么</h3><p>它是一款持久层框架，支持自定义SQL、存储过程和结果集映射。通过XML或者注解来实现ORM映射。</p>
-<h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><pre><code>&lt;dependency&gt;
-  &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
-  &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
-  &lt;version&gt;x.x.x&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre><p> 与Spring框架的集成</p>
-<pre><code>&lt;dependency&gt;
-    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
-    &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
-    &lt;version&gt;x.x.x&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre><h3 id="框架配置"><a href="#框架配置" class="headerlink" title="框架配置"></a>框架配置</h3><pre><code>1. 数据源(必须)、SqlSessionFactory
-2. Settings 缓存、代理、作用域等
-3. typeAliases POJO别名
-4. typeHandlers 可以自定义类型映射，比如Enum映射为Name or Order
-5. environments 
-    - 不同环境不同设置(开发、测试、生产等)
-    - 多数据源对应多个SqlSessionFactory
-6. 插件 实现Interceptor接口，拦截下列方法
-    Executor (update, query, flushStatements, commit, rollback, getTransaction, close, isClosed)
-    ParameterHandler (getParameterObject, setParameters)
-    ResultSetHandler (handleResultSets, handleOutputParameters)
-    StatementHandler (prepare, parameterize, batch, update, query)
-7.  Mappers XML映射文件
-</code></pre><h3 id="Mapper语法"><a href="#Mapper语法" class="headerlink" title="Mapper语法"></a>Mapper语法</h3><ul>
-<li>cache – 给定命名空间的缓存配置。</li>
-<li>cache-ref – 其他命名空间缓存配置的引用。</li>
-<li>resultMap – 是最复杂也是最强大的元素，用来描述如何从数据库结果集中来加载对象。<ul>
-<li>自动映射以及驼峰映射mapUnderscoreToCamelCase=true\</li>
-<li>集合嵌套association、collection等</li>
-<li>鉴别器discriminator case判断</li>
-</ul>
-</li>
-<li>sql – 可被其他语句引用的可重用语句块。</li>
-<li>insert – 映射插入语句</li>
-<li>update – 映射更新语句</li>
-<li>delete – 映射删除语句</li>
-<li>select – 映射查询语句<br>PS： 缓存使用的时候可以参考<a href="https://tech.meituan.com/mybatis_cache.html" target="_blank" rel="noopener">聊聊MyBatis缓存机制</a><br>不过建议使用Spring+Redis实现，更靠谱一些</li>
-</ul>
-<h3 id="动态-SQL"><a href="#动态-SQL" class="headerlink" title="动态 SQL"></a>动态 SQL</h3><ul>
-<li>if</li>
-<li>choose/when/otherwise</li>
-<li>bind</li>
-<li>trim, where, set</li>
-<li>foreach</li>
-</ul>
-<h3 id="JAVA-API"><a href="#JAVA-API" class="headerlink" title="JAVA API"></a>JAVA API</h3><ul>
-<li>注解</li>
-<li>SqlSession</li>
-<li>SqlBuilder</li>
-</ul>
-<h3 id="问题集合"><a href="#问题集合" class="headerlink" title="问题集合"></a>问题集合</h3><ol>
-<li>insert操作报 无效的列：111<ul>
-<li>原因: 插入空值到非空字段</li>
-</ul>
-</li>
-</ol>
 
       
     </div>
@@ -598,12 +474,94 @@
       
       
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mybatis/">Mybatis</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Design-Pattern/">Design Pattern</a></li></ul>
 	</div>
 
       
 	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/troubleshooting/">troubleshooting</a>
+	<a class="article-category-link" href="/categories/文摘/">文摘</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-观察者模式" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/03/26/观察者模式/" class="article-date">
+  	<time datetime="2019-03-25T16:00:00.000Z" itemprop="datePublished">2019-03-26</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/26/观察者模式/">观察者模式</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="观察者（Observer）"><a href="#观察者（Observer）" class="headerlink" title="观察者（Observer）"></a>观察者（Observer）</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>当对象间存在一对多关系时，则使用观察者模式（Observer Pattern）。比如，当一个对象被修改时，则会自动通知依赖它的对象。观察者模式属于行为型模式。</p>
+<h3 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h3><p>定义对象之间的一对多依赖，当一个对象状态改变时，它的所有依赖都会收到通知并且自动更新状态。</p>
+<p>主题（Subject）是被观察的对象，而其所有依赖者（Observer）称为观察者。</p>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/7a3c6a30-c735-4edb-8115-337288a4f0f2.jpg" width="600"> </div><br></p>
+<h3 id="Class-Diagram"><a href="#Class-Diagram" class="headerlink" title="Class Diagram"></a>Class Diagram</h3><p>主题（Subject）具有注册和移除观察者、并通知所有观察者的功能，主题是通过维护一张观察者列表来实现这些操作的。</p>
+<p>观察者（Observer）的注册功能需要调用主题的 registerObserver() 方法。</p>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/a8c8f894-a712-447c-9906-5caef6a016e3.png"> </div><br></p>
+<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><p>天气数据布告板会在天气信息发生改变时更新其内容，布告板有多个，并且在将来会继续增加。</p>
+<p><div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/b1df9732-86ce-4d69-9f06-fba1db7b3b5a.jpg"> </div><br></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">registerObserver</span><span class="params">(Observer o)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">removeObserver</span><span class="params">(Observer o)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">notifyObserver</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WeatherData</span> <span class="keyword">implements</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Observer&gt; observers;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> temperature;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> humidity;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> pressure;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WeatherData</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        observers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMeasurements</span><span class="params">(<span class="keyword">float</span> temperature, <span class="keyword">float</span> humidity, <span class="keyword">float</span> pressure)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.temperature = temperature;</span><br><span class="line">        <span class="keyword">this</span>.humidity = humidity;</span><br><span class="line">        <span class="keyword">this</span>.pressure = pressure;</span><br><span class="line">        notifyObserver();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerObserver</span><span class="params">(Observer o)</span> </span>&#123;</span><br><span class="line">        observers.add(o);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeObserver</span><span class="params">(Observer o)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i = observers.indexOf(o);</span><br><span class="line">        <span class="keyword">if</span> (i &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            observers.remove(i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">notifyObserver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (Observer o : observers) &#123;</span><br><span class="line">            o.update(temperature, humidity, pressure);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">float</span> temp, <span class="keyword">float</span> humidity, <span class="keyword">float</span> pressure)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StatisticsDisplay</span> <span class="keyword">implements</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">StatisticsDisplay</span><span class="params">(Subject weatherData)</span> </span>&#123;</span><br><span class="line">        weatherData.reisterObserver(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">float</span> temp, <span class="keyword">float</span> humidity, <span class="keyword">float</span> pressure)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"StatisticsDisplay.update: "</span> + temp + <span class="string">" "</span> + humidity + <span class="string">" "</span> + pressure);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CurrentConditionsDisplay</span> <span class="keyword">implements</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CurrentConditionsDisplay</span><span class="params">(Subject weatherData)</span> </span>&#123;</span><br><span class="line">        weatherData.registerObserver(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">float</span> temp, <span class="keyword">float</span> humidity, <span class="keyword">float</span> pressure)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"CurrentConditionsDisplay.update: "</span> + temp + <span class="string">" "</span> + humidity + <span class="string">" "</span> + pressure);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WeatherStation</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        WeatherData weatherData = <span class="keyword">new</span> WeatherData();</span><br><span class="line">        CurrentConditionsDisplay currentConditionsDisplay = <span class="keyword">new</span> CurrentConditionsDisplay(weatherData);</span><br><span class="line">        StatisticsDisplay statisticsDisplay = <span class="keyword">new</span> StatisticsDisplay(weatherData);</span><br><span class="line"></span><br><span class="line">        weatherData.setMeasurements(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        weatherData.setMeasurements(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CurrentConditionsDisplay.update: 0.0 0.0 0.0</span><br><span class="line">StatisticsDisplay.update: 0.0 0.0 0.0</span><br><span class="line">CurrentConditionsDisplay.update: 1.0 1.0 1.0</span><br><span class="line">StatisticsDisplay.update: 1.0 1.0 1.0</span><br></pre></td></tr></table></figure>
+<h3 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h3><ul>
+<li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/Observer.html" target="_blank" rel="noopener">java.util.Observer</a></li>
+<li><a href="http://docs.oracle.com/javase/8/docs/api/java/util/EventListener.html" target="_blank" rel="noopener">java.util.EventListener</a></li>
+<li><a href="http://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpSessionBindingListener.html" target="_blank" rel="noopener">javax.servlet.http.HttpSessionBindingListener</a></li>
+<li><a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="noopener">RxJava</a></li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Design-Pattern/">Design Pattern</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/文摘/">文摘</a>
 	</div>
 
 
@@ -626,7 +584,7 @@
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
     </nav>
   
 </div>

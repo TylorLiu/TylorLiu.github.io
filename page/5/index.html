@@ -177,6 +177,291 @@
 
       <div class="body-wrap">
   
+    <article id="post-SpringBoot集成JRES-RPC" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/11/01/SpringBoot集成JRES-RPC/" class="article-date">
+  	<time datetime="2018-11-01T02:03:00.000Z" itemprop="datePublished">2018-11-01</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/01/SpringBoot集成JRES-RPC/">SpringBoot集成JRES-RPC 实现T2服务</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h4><ol>
+<li>需要使用Java对接第三方平台,提供给C程序调用</li>
+<li>保持项目架构简单、容易部署</li>
+</ol>
+<h4 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h4><ol>
+<li>新建一个SpringBoot项目</li>
+<li><p>参考<a href="http://rdc.hundsun.com/product/download/jresServer.htm" target="_blank" rel="noopener">JRES Server框架说明</a>，单独引入RPC组件，主要是引入以下依赖：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-api&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-spi-t2def&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-rpc-spi-spring4&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.2&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.hundsun.jresplus&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jresplus-common-core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在启动类中引入JRES-RPC的Bean配置并设置配置文件路径<br><a href="https://imgchr.com/i/iWrDl6" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/01/iWrDl6.md.png" alt="iWrDl6.md.png"></a></p>
+</li>
+<li>配置好server.properties和ares-app-config.xml文件，并放到resources目录下</li>
+<li>开发remoting接口，并使用HSAdmin工具测试 （可以咨询研发中心客服苏响）</li>
+</ol>
+<h4 id="遇到的一些问题"><a href="#遇到的一些问题" class="headerlink" title="遇到的一些问题"></a>遇到的一些问题</h4><ol>
+<li>引入SpringBoot的热部署工具spring-boot-devtools之后，参数为JavaBean的T2接口报argument type miss match。<br> 调试后发现，热部署工具使用RestartedClassLoader加载类，而T2接口的参数Bean是由其它的类加载器加载，所以虽然是同一个类型，但是Class对象不一致，反射调用method报错。<br> 移除spring-boot-devtools后成功解决。</li>
+<li>项目打成Jar包运行之后 发现T2Server没有启动，也没有报错。<br> 几经排查，对比Application类Main启动的方式下的日志,怀疑XML配置的JavaBean CepContextLoader没有加载，因此把配置文件从jresplus-rpc-spi-spring4中拿出来放到项目路径下，将其中的CepContextLoader改为@Bean加载。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="comment">//注释掉jresplus-cep-beans.xml里的CepContextLoader和SpringPluginFramework配置</span></span><br><span class="line"><span class="meta">@ImportResource</span>(&#123;<span class="string">"classpath:config/jresplus-cep-beans.xml"</span>,<span class="string">"classpath:config/remoting-main-beans.xml"</span>&#125;)</span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CopApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.setProperty(<span class="string">"JresConfigLocation"</span>,<span class="string">"classpath:server.properties"</span>);</span><br><span class="line">        SpringApplication.run(CopApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span>(<span class="string">"jres.framework"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> SpringPluginFramework <span class="title">springPluginFramework</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SpringPluginFramework();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function">CepContextLoader <span class="title">CepContextLoader</span><span class="params">(SpringPluginFramework springPluginFramework)</span></span>&#123;</span><br><span class="line">        CepContextLoader cepContextLoader = <span class="keyword">new</span> CepContextLoader();</span><br><span class="line">        cepContextLoader.setPropPath(<span class="string">"classpath*:ares-app-config.xml"</span>);</span><br><span class="line">        cepContextLoader.setFramework(springPluginFramework);</span><br><span class="line">        <span class="keyword">return</span>  cepContextLoader;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>重新打包后，测试可用。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-JAVA大纲" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/09/08/JAVA大纲/" class="article-date">
+  	<time datetime="2018-09-08T03:13:00.000Z" itemprop="datePublished">2018-09-08</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/08/JAVA大纲/">JAVA培训大纲</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h3><ul>
+<li>为什么要用java<ol>
+<li>平台无关性，方便跨平台部署</li>
+<li>面向对象(封装、继承、多态)</li>
+<li>强大的原生库 (屏蔽底层细节)  </li>
+<li>丰富的第三方库</li>
+<li>各种成熟的解决方案</li>
+<li>…</li>
+</ol>
+</li>
+<li>开发准备<ol>
+<li>JDK (源码、工具、JRE)</li>
+<li>Maven (管理第三方依赖，编译打包等)</li>
+<li>IDE (辅助编码、调试运行等)</li>
+<li>Web容器(tomcat/jetty等)    </li>
+</ol>
+</li>
+<li>要学哪些东西 (了解、会用、理解)<ol>
+<li>语法 (enum、注解)</li>
+<li>编码规范<ol>
+<li>命名</li>
+<li>日志</li>
+<li>异常处理</li>
+<li>注释</li>
+</ol>
+</li>
+<li>常用的原生类(java.lang、java.util)</li>
+<li>常用的框架<ol>
+<li>Spring&amp;SpringMVC</li>
+<li>MyBatis</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h3><ul>
+<li>并发编程</li>
+<li>抽象建模(服务、接口设计等)</li>
+<li>自顶向下、逐层分解</li>
+<li>JVM内存模型</li>
+<li>常见问题排查</li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-踩坑记5-Mybatis合集" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/05/19/踩坑记5-Mybatis合集/" class="article-date">
+  	<time datetime="2018-05-19T08:20:00.000Z" itemprop="datePublished">2018-05-19</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/19/踩坑记5-Mybatis合集/">踩坑记5-Mybatis合集</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>从刚参加工作开始就接触了Mybatis，但是大部分时候只是照猫画虎，一直没有系统的学习过，遇到些问题就很容易卡住，搜不到解决方法，只能参照错误逐行排查来定位问题，效率十分低下。<br>反思之后，决定从头学习一下，顺便整理下踩过的坑，分析下原因。<br><a href="http://www.mybatis.org/mybatis-3/index.html#" target="_blank" rel="noopener">官网链接</a></p>
+<h3 id="MyBatis是什么"><a href="#MyBatis是什么" class="headerlink" title="MyBatis是什么"></a>MyBatis是什么</h3><p>它是一款持久层框架，支持自定义SQL、存储过程和结果集映射。通过XML或者注解来实现ORM映射。</p>
+<h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+  &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+  &lt;version&gt;x.x.x&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><p> 与Spring框架的集成</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+    &lt;version&gt;x.x.x&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><h3 id="框架配置"><a href="#框架配置" class="headerlink" title="框架配置"></a>框架配置</h3><pre><code>1. 数据源(必须)、SqlSessionFactory
+2. Settings 缓存、代理、作用域等
+3. typeAliases POJO别名
+4. typeHandlers 可以自定义类型映射，比如Enum映射为Name or Order
+5. environments 
+    - 不同环境不同设置(开发、测试、生产等)
+    - 多数据源对应多个SqlSessionFactory
+6. 插件 实现Interceptor接口，拦截下列方法
+    Executor (update, query, flushStatements, commit, rollback, getTransaction, close, isClosed)
+    ParameterHandler (getParameterObject, setParameters)
+    ResultSetHandler (handleResultSets, handleOutputParameters)
+    StatementHandler (prepare, parameterize, batch, update, query)
+7.  Mappers XML映射文件
+</code></pre><h3 id="Mapper语法"><a href="#Mapper语法" class="headerlink" title="Mapper语法"></a>Mapper语法</h3><ul>
+<li>cache – 给定命名空间的缓存配置。</li>
+<li>cache-ref – 其他命名空间缓存配置的引用。</li>
+<li>resultMap – 是最复杂也是最强大的元素，用来描述如何从数据库结果集中来加载对象。<ul>
+<li>自动映射以及驼峰映射mapUnderscoreToCamelCase=true\</li>
+<li>集合嵌套association、collection等</li>
+<li>鉴别器discriminator case判断</li>
+</ul>
+</li>
+<li>sql – 可被其他语句引用的可重用语句块。</li>
+<li>insert – 映射插入语句</li>
+<li>update – 映射更新语句</li>
+<li>delete – 映射删除语句</li>
+<li>select – 映射查询语句<br>PS： 缓存使用的时候可以参考<a href="https://tech.meituan.com/mybatis_cache.html" target="_blank" rel="noopener">聊聊MyBatis缓存机制</a><br>不过建议使用Spring+Redis实现，更靠谱一些</li>
+</ul>
+<h3 id="动态-SQL"><a href="#动态-SQL" class="headerlink" title="动态 SQL"></a>动态 SQL</h3><ul>
+<li>if</li>
+<li>choose/when/otherwise</li>
+<li>bind</li>
+<li>trim, where, set</li>
+<li>foreach</li>
+</ul>
+<h3 id="JAVA-API"><a href="#JAVA-API" class="headerlink" title="JAVA API"></a>JAVA API</h3><ul>
+<li>注解</li>
+<li>SqlSession</li>
+<li>SqlBuilder</li>
+</ul>
+<h3 id="问题集合"><a href="#问题集合" class="headerlink" title="问题集合"></a>问题集合</h3><ol>
+<li>insert操作报 无效的列：111<ul>
+<li>原因: 插入空值到非空字段</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mybatis/">Mybatis</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/troubleshooting/">troubleshooting</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Java根据模板生成PDF文件" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -336,225 +621,9 @@
 
 
   
-    <article id="post-数据库性能优化思路总结" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/26/数据库性能优化思路总结/" class="article-date">
-  	<time datetime="2018-03-26T11:59:00.000Z" itemprop="datePublished">2018-03-26</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/26/数据库性能优化思路总结/">数据库性能优化思路总结</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <ol>
-<li>性能需求——&gt;数据库设计<ul>
-<li>规范：<ul>
-<li>无重复 或多值的列</li>
-<li>非关键字全部依赖PK</li>
-<li>非关键字不互相依赖</li>
-</ul>
-</li>
-<li>合理冗余<ul>
-<li>主从/读写分离，分散压力</li>
-<li>表 </li>
-<li>字段 ，减少连接查询</li>
-</ul>
-</li>
-<li>主键、外键、索引设计</li>
-<li>字段设计(类型、长度)</li>
-<li>系统设计</li>
-</ul>
-</li>
-<li>编码——&gt;SQL优化、事务&amp;锁<ul>
-<li>JOIN使用</li>
-<li>少用*，多指定具体字段</li>
-</ul>
-</li>
-<li>数据库分割(中间件-mycat)<ul>
-<li>分区：在多个硬盘上存储(IO速度、存储量)</li>
-<li>分表<ul>
-<li>按时间分表，历史数据归档</li>
-<li>分表策略-&gt;Hash分表（myBatis）</li>
-</ul>
-</li>
-<li>分库<ul>
-<li>读写分离</li>
-<li>业务分库</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/Blog/">Blog</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-添加jar包到本地Maven仓库" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/24/添加jar包到本地Maven仓库/" class="article-date">
-  	<time datetime="2018-03-24T02:29:00.000Z" itemprop="datePublished">2018-03-24</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/24/添加jar包到本地Maven仓库/">添加jar包到本地Maven仓库</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="添加jar包到本地Maven仓库"><a href="#添加jar包到本地Maven仓库" class="headerlink" title="添加jar包到本地Maven仓库"></a>添加jar包到本地Maven仓库</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn install:install-file -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.197 -Dpackaging=jar -Dfile=F:\iVMS9620\Downloads\h2-1.4.197.jar</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/maven/">maven</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/tips/">tips</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Linux下排查Java服务CPU飙升" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/03/23/Linux下排查Java服务CPU飙升/" class="article-date">
-  	<time datetime="2018-03-23T12:08:00.000Z" itemprop="datePublished">2018-03-23</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/23/Linux下排查Java服务CPU飙升/">Linux下排查Java服务CPU飙升</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>大致步骤：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//拿到进程号</span><br><span class="line">ps -ef|grep java</span><br><span class="line">//查线程CPU占用</span><br><span class="line">ps -mp PID -o THREAD,tid,time </span><br><span class="line">//查到的线程号转成 16进制</span><br><span class="line">printf &quot;%x\n&quot; tid</span><br><span class="line">// 打印线程堆栈</span><br><span class="line">jstack PID|grep tid</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/troubleshooting/">troubleshooting</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
     </nav>
   
 </div>

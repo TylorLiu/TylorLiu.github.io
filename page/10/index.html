@@ -177,6 +177,264 @@
 
       <div class="body-wrap">
   
+    <article id="post-JVM内存溢出分析" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/01/29/JVM内存溢出分析/" class="article-date">
+  	<time datetime="2018-01-29T08:03:00.000Z" itemprop="datePublished">2018-01-29</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/29/JVM内存溢出分析/">JVM内存溢出分析总结</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>开个文总结下我遇到的内存溢出问题，放个JVM的图以供参考：</p>
+<p><img src="https://s1.ax1x.com/2018/01/29/pzqqqs.jpg" alt="pzqqqs.jpg"></p>
+<p>从内存溢出分析的角度来看，内存主要分为栈内存、堆内存、直接内存和MetaSpace(java8之前是堆内的永久代)。<br>下面主要讲下这几种内存溢出的场景：</p>
+<h3 id="1-StackOverflowError-栈内存溢出"><a href="#1-StackOverflowError-栈内存溢出" class="headerlink" title="1. StackOverflowError 栈内存溢出"></a>1. StackOverflowError 栈内存溢出</h3><p>这里stack指的是线程的独立内存空间，主要保存方法执行信息，每个方法调用时都会产生一个栈帧，当栈深度超过虚拟机分配给线程的栈大小时就会出现StackOverflowError。<br>出现这个问题有以下几种可能：</p>
+<ul>
+<li>分配的栈内存太小，这种不太常见 JVM默认栈内存-Xss1024k，足够一般线程使用。</li>
+<li>方法循环调用，A方法调用B，B调用C，C又来调用A，就会出现。大部分栈溢出都是这种情况。</li>
+<li>方法迭代，比如分页查询，总数1W，每页查一个，查到hasNext为true就继续查，迭代1W次，也有可能出现溢出。</li>
+</ul>
+<p>问题出现后，根据stackTrace错误堆栈基本上就可以定位到问题位置。</p>
+<p>PS：高并发应用创建过多线程也可能引起栈内存OOM，有开源、节流两种思路应对：</p>
+<ul>
+<li>开源：提升栈内存总量<ul>
+<li>扩大服务器内存</li>
+<li>减少堆内存-Xms -Xmx</li>
+</ul>
+</li>
+<li>节流<ul>
+<li>减少每个线程分配的栈内存 -Xss512k或256k </li>
+<li>通过负载均衡、拒绝&amp;延迟响应等策略减少线程并发数</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-OutOfMemoryError-Java-heap-space-堆内存溢出"><a href="#2-OutOfMemoryError-Java-heap-space-堆内存溢出" class="headerlink" title="2. OutOfMemoryError: Java heap space 堆内存溢出"></a>2. OutOfMemoryError: Java heap space 堆内存溢出</h3><p>堆内存主要用来存放java对象，堆内存不够了就会报错。<br>问题有两种可能的原因：</p>
+<ol>
+<li>堆内存设置太小，无法满足应用正常运行的需要(包括基本运行以及承载高峰期的内存压力)；</li>
+<li>应用存在内存泄漏，部分对象无法回收，导致占用内存越来越多。</li>
+</ol>
+<p>遇到这种情况，可以</p>
+<ul>
+<li>先把最大堆内存-Xmx改大一些</li>
+<li>进行JVisualVM内存抽样或者MAT等工具dump分析，查看内存中对象分步情况。重点观察内存占比较大的实例和线程。</li>
+<li>还可以监视应用的堆内存，看一下内存的增长是否有规律。</li>
+</ul>
+<p>也可以使用jmap等java命令来进行dump分析，详情参考<a href="http://shenzhang.github.io/blog/2014/04/24/understanding-out-of-memory-error/" target="_blank" rel="noopener">深入解析OutOfMemoryError</a></p>
+<p>另外，如果多次报错时打出的strackTrace都在同一个位置，建议着重看一下。如果是某些框架内部报错，先去官网或者Google一下。</p>
+<h3 id="3-OutOfMemoryError-PermGen-space-MetaSpace-永久代或Metaspace溢出"><a href="#3-OutOfMemoryError-PermGen-space-MetaSpace-永久代或Metaspace溢出" class="headerlink" title="3. OutOfMemoryError: PermGen space / MetaSpace 永久代或Metaspace溢出"></a>3. OutOfMemoryError: PermGen space / MetaSpace 永久代或Metaspace溢出</h3><p>这里主要讲类信息导致的内存溢出，类信息在java8之前存放在永久代，java8之后存在Metaspace中。<br>应用加载的类信息主要分两种: class文件和运行过程中动态生成的类。除非特地限制-XX:MaxMetaspaceSize或-XX:MaxPermSize大小，一般该问题都是由动态类引起的。<br>可以通过JVisualVM监视MetaSpace和类加载数，MetaSpace的增长与类加载的关系。</p>
+<p>可以通过以下方式定位问题原因：</p>
+<ul>
+<li>从错误堆栈找到问题抛出点</li>
+<li>本地调试抛出点代码,加上JVM参数 -verbose:class，打印类加载信息</li>
+<li>找到动态加载类的代码，分析如何解决</li>
+</ul>
+<p>之前解决过的案例是由JAXB解析XML数据引起的，JAXBContext.newInstance()会生成一些动态类和方法，在JDK的JAXB工具类中通过WeakReference&lt; Cache &gt;来缓存JAXBContext,但是容易被回收，而且不能存放多个JAXBContext，如果需要解析多种格式的XML数据，还是会经常调用JAXBContext.newInstance()。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Cache</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Class type;</span><br><span class="line">    <span class="keyword">final</span> JAXBContext context;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Cache</span><span class="params">(Class type)</span> <span class="keyword">throws</span> JAXBException </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.type = type;</span><br><span class="line">        <span class="keyword">this</span>.context = JAXBContext.newInstance(type);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>最后采用Map来存放JAXBContext。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Map&lt;Class&lt;?&gt;, JAXBContext&gt; contextMap = <span class="keyword">new</span> ConcurrentHashMap&lt;&gt;();</span><br></pre></td></tr></table></figure></p>
+<p>还有一种类似的情况，使用Apache-CXF生成的Webservice-client，每次初始化也会生成一些动态类，应该使用单例模式避免重复初始化。<br>另外，CGLib字节码增强实现的动态代理以及Groovy等动态语言、动态产生的JSP文件等都会动态加载类信息，使用时需要注意。</p>
+<h3 id="4-堆外内存溢出"><a href="#4-堆外内存溢出" class="headerlink" title="4. 堆外内存溢出"></a>4. 堆外内存溢出</h3><p>java NIO通信时默认会使用ByteBuffer缓存数据，如果用完忘记调用ByteBuffer.release()方法，容易导致内存泄漏。<br>Tips：</p>
+<ul>
+<li>JVisualVm 装上Buffer Pools插件就可以监视java进程堆外内存的使用情况了，分别显示Direct、Mapped</li>
+<li>使用了Netty应用在启动时可以用-Dio.netty.leakDetection.level=PARANOID 检测一下是否有内存泄漏情况，根据错误堆栈可以定位到泄漏点</li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JVM/">JVM</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/troubleshooting/">troubleshooting</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-WinRAR文件分卷压缩" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/01/25/WinRAR文件分卷压缩/" class="article-date">
+  	<time datetime="2018-01-25T03:13:00.000Z" itemprop="datePublished">2018-01-25</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/25/WinRAR文件分卷压缩/">WinRAR文件分卷压缩</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>分类Tips就是记录一些小技巧，很简单，可能很多人都知道，但是不知道的时候就比较容易捉急，比如想上传个文件，但是超过单个文件最大限制，那怎么传呢？</p>
+<ul>
+<li>压缩文件，可是压完了还是太大，咋办呢？</li>
+<li>文件要是能切成几块就好了，怎么切呢？</li>
+</ul>
+<p>用WinRAR分卷压缩：<br><img src="https://s1.ax1x.com/2018/01/26/pqyWY4.jpg" alt="pqyWY4.jpg"></p>
+<p>刚知道的时候，感觉像是突破了知见障</p>
+<ul>
+<li>原来WinRAR还有这功能，基本天天用却视而不见</li>
+<li>原来这么简单，白瞎了我到处找办法</li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WinRAR/">WinRAR</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/tips/">tips</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-踩坑记2—SpringDataJPA合集" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/01/24/踩坑记2—SpringDataJPA合集/" class="article-date">
+  	<time datetime="2018-01-24T09:40:00.000Z" itemprop="datePublished">2018-01-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/24/踩坑记2—SpringDataJPA合集/">踩坑记2—SpringDataJPA合集</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="lombok-Data注解-pojo-–-存在外键关联"><a href="#lombok-Data注解-pojo-–-存在外键关联" class="headerlink" title="lombok@Data注解 pojo – 存在外键关联"></a>lombok@Data注解 pojo – 存在外键关联</h3><ul>
+<li>toString()导致StackOverFlow</li>
+<li>作为DTO输出，JSON序列化报错 (属性添加@JsonIgnore解决)</li>
+</ul>
+<h3 id="依靠数据库unique防业务字段重复"><a href="#依靠数据库unique防业务字段重复" class="headerlink" title="依靠数据库unique防业务字段重复"></a>依靠数据库unique防业务字段重复</h3><ul>
+<li>示例中,由于saveDevice被事务控制，若device与已有设备冲突，saveDevice()执行完后提交事务时才会报错，此时</li>
+</ul>
+<p>已调用外部接口上报了新增设备信息，本系统回滚save操作，就会导致数据不一致。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saveDevice</span><span class="params">(Device device)</span></span>&#123;</span><br><span class="line">  deviceDao.save(device);</span><br><span class="line">  outerService.reportDeviceAdded(device);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="for循环内调用-Transactional方法，偶现异常"><a href="#for循环内调用-Transactional方法，偶现异常" class="headerlink" title="for循环内调用@Transactional方法，偶现异常"></a>for循环内调用@Transactional方法，偶现异常</h3><p>Spring - No EntityManager with actual transaction available for current thread - cannot reliably process ‘persist’ call<br>将外部方法也标记@Transactional，循环内部捕获异常，内部改为@Transactional(propagation = Propagation.REQUIRES_NEW)</p>
+<h3 id="外键关联对象先后save时偶现"><a href="#外键关联对象先后save时偶现" class="headerlink" title="外键关联对象先后save时偶现"></a>外键关联对象先后save时偶现</h3><ul>
+<li>错误问题：<br>org.springframework.orm.jpa.JpaObjectRetrievalFailureException: Unable to find com.xxx.DeviceChannel with id 12;</li>
+<li>代码：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deviceChannelDao.save(channels);</span><br><span class="line">deviceDao.save(device);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>deviceChannel与device外键关联，修改后代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">device.setDeviceChannels(deviceChannelDao.save(channels));</span><br><span class="line">deviceDao.save(device);</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JPA/">JPA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/troubleshooting/">troubleshooting</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-踩坑记1" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -333,190 +591,9 @@
 
 
   
-    <article id="post-倒腾Hexo博客全过程" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/22/倒腾Hexo博客全过程/" class="article-date">
-  	<time datetime="2018-01-22T00:42:47.000Z" itemprop="datePublished">2018-01-22</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/22/倒腾Hexo博客全过程/">倒腾Hexo博客全过程</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>长久以来在一些博客网站上零零散散写过几篇博客，但是缺乏交流，也没有什么归属感，一直没有足够的劲头坚持下来。后来，在网上看到各路大牛已经独立建站，了解了大致过程，虽心向往之，却力有未逮。直到偶然了解到Hexo+GitHub可以发布个人博客，才决定付诸实践。最后根据潘柏信同学的<a href="http://baixin.io/2015/08/HEXO%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" target="_blank" rel="noopener">博文</a>，以及网上的一些资源，完成博客的搭建和使用。</p>
-<hr>
-<p>经过这两天的摸索，我总结了一个简单的套路，follow me!</p>
-<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a><strong>环境准备</strong></h2><h3 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h3><p>Node.js<a href="https://nodejs.org/" target="_blank" rel="noopener">官网</a>下载</p>
-<h3 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h3><p>用来把本地内容提交到github，我是直接装了<a href="https://desktop.github.com/" target="_blank" rel="noopener">GitHub Desktop</a></p>
-<h3 id="GitHub"><a href="#GitHub" class="headerlink" title="GitHub"></a>GitHub</h3><p><a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>账号一个</p>
-<h4 id="建立Repository"><a href="#建立Repository" class="headerlink" title="建立Repository"></a>建立Repository</h4><p>建立与你用户名对应的仓库，仓库名必须为【your_user_name.github.io】，用来发布博客</p>
-<h3 id="Hexo"><a href="#Hexo" class="headerlink" title="Hexo"></a>Hexo</h3><p>直接参考<a href="https://hexo.io/" target="_blank" rel="noopener">官网</a></p>
-<h5 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-<h4 id="生成项目到指定目录blog"><a href="#生成项目到指定目录blog" class="headerlink" title="生成项目到指定目录blog"></a>生成项目到指定目录blog</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo init blog</span><br><span class="line">cd blog</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
-<h4 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<p>得到:</p>
-<pre><code>INFO  Hexo is running at http://localhost:4000/. Press Ctrl+C to stop.
-</code></pre><p>此时，打开 <a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a> 就可以看到Hexo默认的博客了。</p>
-<h4 id="发布到GitHub"><a href="#发布到GitHub" class="headerlink" title="发布到GitHub"></a>发布到GitHub</h4><p>修改blog目录下 _config.yml中的deploy配置</p>
-<pre><code>vim _config.yml
-</code></pre><p>翻到最下面，改成 (your_user_name替换成你的github用户名)</p>
-<pre><code>deploy:
-  type: git
-  repository: https://github.com/your_user_name/your_user_name.github.io.git
-  branch: master
-</code></pre><p>安装HEXO的git插件</p>
-<pre><code>npm install hexo-deployer-git--save
-</code></pre><p>然后就可以愉快的发布了</p>
-<pre><code>hexo deploy
-</code></pre><p>　去你的页面看看吧，<a href="http://your_user_name.github.io/" target="_blank" rel="noopener">http://your_user_name.github.io/</a><br>  以后每次修改后部署，可按以下三步来进行。</p>
-<pre><code>hexo clean
-hexo generate
-hexo deploy
-</code></pre><p>   for short</p>
-<pre><code>hexo clean
-hexo g -d
-</code></pre><h2 id="博客建设"><a href="#博客建设" class="headerlink" title="博客建设"></a>博客建设</h2><h3 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h3><p>网上有大量Hexo主题，怎么获取不再细说，但是怎么用？<br> 主题放到blog/themes下，修改_config.yml中theme</p>
-<pre><code>theme: newtheme
-</code></pre><p> 顺便可以改下</p>
-<pre><code>title:
-subtitle:
-description:
-author:
-</code></pre><p>然后，hexo s 运行看下效果</p>
-<h3 id="更新维护"><a href="#更新维护" class="headerlink" title="更新维护"></a>更新维护</h3><p>博客创建：</p>
-<pre><code>hexo new  名称
-</code></pre><p>为了方便维护，我把blog文件也传到Github上，最后决定用统一用IDEA管理。</p>
-<ul>
-<li>Markdown插件编辑博客</li>
-<li>然后用Terminal窗口执行Hexo命令发布</li>
-<li>确认效果后，用git插件提交。</li>
-</ul>
-<h3 id="推荐图床-—-路过图床"><a href="#推荐图床-—-路过图床" class="headerlink" title="推荐图床 — 路过图床"></a>推荐图床 — <a href="https://imgchr.com/" target="_blank" rel="noopener">路过图床</a></h3><p>写博客经常要插入图片，放在本地需要考虑统一相对路径，非常麻烦。一般都是放到云存储、图床上生成图片外链，再嵌入md中。</p>
-<p>云存储申请、管理相对复杂，用来做个人图床事倍功半，比较了几家图床网站之后选择了<a href="https://imgchr.com/" target="_blank" rel="noopener">路过图床</a>。<br>用起来相当方便：</p>
-<ul>
-<li>免费且无须注册</li>
-<li>上传后直接生成各种链接</li>
-<li>网页、插件、PC客户端都可用</li>
-<li>注册后可管理相册，还有社交功能</li>
-</ul>
-<p>完全满足写博客的需要，点赞~</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hexo/">Hexo</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/blog/">blog</a>
-	</div>
-
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-常用工具" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/01/22/常用工具/" class="article-date">
-  	<time datetime="2018-01-21T23:42:47.000Z" itemprop="datePublished">2018-01-22</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/22/常用工具/">常用工具</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>办公、开发工具</p>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tools/">tools</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<a class="article-category-link" href="/categories/memo/">memo</a>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a  href="/2018/01/22/常用工具/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/9/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span>
+      <a class="extend prev" rel="prev" href="/page/9/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/11/">Next &raquo;</a>
     </nav>
   
 </div>
